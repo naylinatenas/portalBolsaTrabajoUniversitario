@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS bolsa_trabajo_07
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_general_ci;
 
-USE bolsa_trabajo_db;
+USE bolsa_trabajo_07;
 
 -- ==========================================
 -- Tabla: usuario
