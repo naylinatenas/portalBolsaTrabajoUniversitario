@@ -1,5 +1,5 @@
 <?php
-// modelo/Oferta.php
+// models/Oferta.php
 class Oferta {
     public $id_oferta;
     public $empresa_id;
@@ -13,6 +13,8 @@ class Oferta {
     public $estado_oferta;
 
     public function __construct($data = []) {
-        foreach ($data as $k => $v) $this->$k = $v;
+        foreach ($data as $k => $v)
+            if (property_exists($this, $k)) $this->$k = $v;
     }
 }
+

@@ -1,5 +1,5 @@
 <?php
-// modelo/Estudiante.php
+// models/Estudiante.php
 class Estudiante {
     public $id_estudiante;
     public $usuario_id;
@@ -10,6 +10,7 @@ class Estudiante {
     public $resumen_perfil;
 
     public function __construct($data = []) {
-        foreach ($data as $k => $v) $this->$k = $v;
+        foreach ($data as $k => $v)
+            if (property_exists($this, $k)) $this->$k = $v;
     }
 }
