@@ -6,7 +6,7 @@ require_once 'Estudiante.php';
 class EstudianteDAO {
     private $pdo;
     public function __construct() {
-        $this->pdo = Conexion::getConexion();
+        $this->pdo = Conexion::conectar();
     }
 
     public function crear(Estudiante $e) {
