@@ -36,7 +36,7 @@ if (isset($_SESSION['rol'])) {
     <i class="bi bi-mortarboard-fill fs-1 mb-3"></i>
     <h1 class="fw-bold">Bolsa de Trabajo Universitario</h1>
     <p class="lead">Conecta el talento universitario con las mejores empresas del país.</p>
-    <a href="login.php" class="btn btn-light btn-lg shadow-sm mt-2">
+    <a href=" views/login.php" class="btn btn-light btn-lg shadow-sm mt-2">
       <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
     </a>
   </div>
