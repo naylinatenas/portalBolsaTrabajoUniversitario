@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../config/auth.php';  // ← protección de sesión
-verificarRol('estudiante');  
+verificarRol('estudiante');
 
 include '../layout/header.php';
 require_once __DIR__ . '/../../models/EstudianteDAO.php';
@@ -15,7 +15,10 @@ $ofertaDAO = new OfertaDAO();
 $usuario_id = $_SESSION['id_usuario'] ?? null;
 $estudiante = $estDAO->obtenerPorUsuario($usuario_id);
 $total_postulaciones = $estudiante ? count($postDAO->listarPorEstudiante($estudiante->id_estudiante)) : 0;
-$total_ofertas = count($ofertaDAO->listarActivas());
+$ofertas_activas = $ofertaDAO->listarActivas();
+$total_ofertas = count($ofertas_activas);
+$ofertas_recientes = array_slice($ofertas_activas, 0, 5);
+
 ?>
 
 <div class="container mt-4">
@@ -48,6 +51,33 @@ $total_ofertas = count($ofertaDAO->listarActivas());
       </div>
     </div>
   </div>
+
+  <div class="mt-5">
+    <h4 class="fw-bold mb-3">📌 Ofertas recientes</h4>
+
+    <?php if (count($ofertas_recientes) > 0): ?>
+      <div class="list-group shadow-sm">
+        <?php foreach ($ofertas_recientes as $o): ?>
+          <a href="detalle_oferta.php?id=<?= $o['id_oferta'] ?>" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1 fw-bold"><?= htmlspecialchars($o['titulo']) ?></h6>
+                <small class="text-muted">
+                  <?= htmlspecialchars($o['razon_social']) ?> • <?= htmlspecialchars($o['modalidad']) ?>
+                </small>
+              </div>
+              <small class="text-muted">
+                <?= date('d/m/Y', strtotime($o['fecha_publicacion'])) ?>
+              </small>
+            </div>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    <?php else: ?>
+      <div class="alert alert-info">No hay ofertas disponibles por ahora.</div>
+    <?php endif; ?>
+  </div>
+
 </div>
 
 <?php include '../layout/footer.php'; ?>

@@ -52,10 +52,13 @@ class OfertaDAO
 
     public function obtenerPorId($id)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM oferta WHERE id_oferta=:id");
+        $sql = "SELECT o.*, e.razon_social 
+            FROM oferta o 
+            JOIN empresa e ON e.id_empresa = o.empresa_id
+            WHERE o.id_oferta = :id";
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
-        $r = $stmt->fetch();
-        return $r ? new Oferta($r) : null;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function actualizar(Oferta $o)
