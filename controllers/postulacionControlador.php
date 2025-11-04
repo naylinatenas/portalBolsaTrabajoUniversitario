@@ -1,39 +1,53 @@
 <?php
-// controlador/postulacionControlador.php
+// controllers/postulacionControlador.php
 session_start();
-require_once __DIR__ . '/../modelo/PostulacionDAO.php';
-require_once __DIR__ . '/../modelo/EstudianteDAO.php';
+require_once __DIR__ . '/../models/PostulacionDAO.php';
+require_once __DIR__ . '/../models/EstudianteDAO.php';
+
+$pdao = new PostulacionDAO();
+$edao = new EstudianteDAO();
 
 $action = $_POST['action'] ?? $_GET['action'] ?? null;
-$pdao = new PostulacionDAO();
-$estDao = new EstudianteDAO();
 
-if ($action === 'postular') {
+// Postular a oferta
+if ($action === 'postular' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'estudiante') {
-        header("Location: ../vista/errores/acceso_denegado.php"); exit;
+        header("Location: ../views/errores/acceso_denegado.php");
+        exit;
     }
     $usuario_id = $_SESSION['id_usuario'];
-    $est = $estDao->obtenerPorUsuarioId($usuario_id);
-    if (!$est) { $_SESSION['error'] = "Completa tu perfil de estudiante."; header("Location: ../vista/estudiante/perfil.php"); exit; }
-    $oferta_id = $_POST['oferta_id'];
-    if ($pdao->existePostulacion($oferta_id, $est->id_estudiante)) {
-        $_SESSION['error'] = "Ya postulaste a esta oferta."; header("Location: ../vista/estudiante/ofertas.php"); exit;
+    $est = $edao->obtenerPorUsuario($usuario_id);
+    if (!$est) {
+        $_SESSION['error'] = "Completa tu perfil antes de postular.";
+        header("Location: ../views/estudiante/perfil.php");
+        exit;
     }
-    $p = new stdClass();
-    $p->oferta_id = $oferta_id;
-    $p->estudiante_id = $est->id_estudiante;
-    $p->comentario_empresa = "";
+    $oferta_id = intval($_POST['oferta_id']);
+    if ($pdao->existe($oferta_id, $est->id_estudiante)) {
+        $_SESSION['error'] = "Ya postulaste a esta oferta.";
+        header("Location: ../views/estudiante/ofertas.php");
+        exit;
+    }
+    $p = new Postulacion([
+        'oferta_id' => $oferta_id,
+        'estudiante_id' => $est->id_estudiante,
+        'comentario_empresa' => null
+    ]);
     $pdao->crear($p);
     $_SESSION['success'] = "Postulación enviada.";
-    header("Location: ../vista/estudiante/historial_postulaciones.php"); exit;
-}
-
-if ($action === 'cambiar_estado' && isset($_POST['id'])) {
-    // admin/empresa cambiar estado de la postulacion
-    $id = $_POST['id'];
-    $estado = $_POST['estado'];
-    $comentario = $_POST['comentario'] ?? null;
-    $pdao->cambiarEstado($id, $estado, $comentario);
-    header("Location: " . ($_POST['return'] ?? "../vista/admin/reportes.php"));
+    header("Location: ../views/estudiante/historial_postulaciones.php");
     exit;
 }
+
+// Cambiar estado (empresa/admin)
+if ($action === 'cambiar_estado' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = intval($_POST['id_postulacion']);
+    $estado = $_POST['estado'];
+    $coment = $_POST['comentario'] ?? null;
+    $pdao->cambiarEstado($id, $estado, $coment);
+    header("Location: " . ($_POST['return'] ?? '../views/admin/reportes.php'));
+    exit;
+}
+
+header("Location: ../index.php");
+exit;
