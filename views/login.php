@@ -1,5 +1,4 @@
 <?php
-// vista/login.php
 session_start();
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['error']);
@@ -22,7 +21,7 @@ $correo_recordado = $_COOKIE['correo_recordado'] ?? '';
         <div class="card-body">
           <h4 class="card-title text-primary">Iniciar sesión</h4>
           <?php if($error): ?><div class="alert alert-danger"><?= htmlentities($error) ?></div><?php endif; ?>
-          <form action="/controlador/loginControlador.php" method="post">
+          <form action="../controllers/loginControlador.php" method="post">
             <input type="hidden" name="action" value="login">
             <div class="mb-3">
               <label class="form-label">Correo</label>

@@ -1,5 +1,4 @@
 <?php
-// models/Usuario.php
 class Usuario {
     public $id_usuario;
     public $nombre_completo;

@@ -23,9 +23,9 @@ $bodyClass = ($theme === 'dark') ? 'bg-dark text-white' : '';
       <ul class="navbar-nav ms-auto">
         <?php if(isset($_SESSION['id_usuario'])): ?>
           <li class="nav-item"><span class="nav-link">Hola, <?= htmlentities($_SESSION['nombre']) ?></span></li>
-          <li class="nav-item"><a class="nav-link" href="/controlador/logout.php">Cerrar sesión</a></li>
+          <li class="nav-item"><a class="nav-link" href="/controllers/logout.php">Cerrar sesión</a></li>
         <?php else: ?>
-          <li class="nav-item"><a class="nav-link" href="/vista/login.php">Iniciar sesión</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/login.php">Iniciar sesión</a></li>
         <?php endif; ?>
         <li class="nav-item">
           <form method="post" action="/vista/toggle_tema.php" class="d-inline">
