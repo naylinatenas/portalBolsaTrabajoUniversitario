@@ -1,3 +1,14 @@
+
+-- ==========================================
+-- BASE DE DATOS: Portal de Bolsa de Trabajo
+Universitaria
+-- Grupo 7 
+-- Integrantes:
+-- Acosta Plascencia, Naylin Atenas
+-- Chuquipoma Medina, Sthefany Darley
+-- Mantilla Sanchez, Elsa Lucia
+-- ==========================================
+
 -- Crear base de datos
 CREATE DATABASE IF NOT EXISTS bolsa_trabajo_07
 CHARACTER SET utf8mb4
@@ -87,28 +98,67 @@ CREATE TABLE catalogo_carreras (
     nombre_carrera VARCHAR(100) NOT NULL
 );
 
--- =========================
--- Datos de prueba mínimos
--- =========================
+USE bolsa_trabajo_07;
 
--- Admin
-INSERT INTO usuario (nombre_completo, correo, clave, rol)
-VALUES ('Administrador Bolsa', 'admin@uni.edu', SHA2('admin123',256), 'admin');
+-- ======================================
+-- INSERTS EN TABLA usuario
+-- ======================================
+INSERT INTO usuario (nombre_completo, correo, clave, rol, estado)
+VALUES 
+('Administrador Bolsa UCV', 'admin@ucv.edu.pe', SHA2('admin123',256), 'admin', 1),
 
--- Empresa y su usuario
-INSERT INTO usuario (nombre_completo, correo, clave, rol)
-VALUES ('Empresa Ejemplo', 'empresa@correo.com', SHA2('empresa123',256), 'empresa');
+-- Empresas
+('Recursos Humanos TechCorp', 'contacto@techcorp.com', SHA2('tech123',256), 'empresa', 1),
+('RRHH AgroPerú S.A.C.', 'rrhh@agroperu.com', SHA2('agro123',256), 'empresa', 1),
 
+-- Estudiantes UCV
+('María Fernanda López', 'maria.lopez@ucv.edu.pe', SHA2('maria123',256), 'estudiante', 1),
+('Carlos Alberto Chávez', 'carlos.chavez@ucv.edu.pe', SHA2('carlos123',256), 'estudiante', 1),
+('Lucía Ramos Torres', 'lucia.ramos@ucv.edu.pe', SHA2('lucia123',256), 'estudiante', 1);
+
+-- ======================================
+-- INSERTS EN TABLA empresa
+-- ======================================
 INSERT INTO empresa (razon_social, ruc, direccion, telefono, correo_contacto, usuario_id, estado)
-VALUES ('TechCorp S.A.C.', '20112233445', 'Av. Principal 123', '999888777', 'rrhh@techcorp.com', 2, 'aprobada');
+VALUES 
+('TechCorp S.A.C.', '20567891234', 'Av. Larco 345, Trujillo', '944123456', 'contacto@techcorp.com', 2, 'aprobada'),
+('AgroPerú S.A.C.', '20678912345', 'Av. Mansiche 789, Trujillo', '955987654', 'rrhh@agroperu.com', 3, 'aprobada');
 
--- Estudiante y su usuario
-INSERT INTO usuario (nombre_completo, correo, clave, rol)
-VALUES ('Juan Pérez', 'juan@uni.edu', SHA2('juan123',256), 'estudiante');
+-- ======================================
+-- INSERTS EN TABLA estudiante
+-- ======================================
+INSERT INTO estudiante (usuario_id, codigo_estudiante, carrera, ciclo, cv_url, resumen_perfil)
+VALUES
+(4, '2023124501', 'Ingeniería de Sistemas', '8', 'https://cvucv.com/maria-lopez.pdf', 'Estudiante con interés en desarrollo web y análisis de datos.'),
+(5, '2023124502', 'Ingeniería Industrial', '7', 'https://cvucv.com/carlos-chavez.pdf', 'Interés en logística y gestión empresarial.'),
+(6, '2023124503', 'Administración de Empresas', '9', 'https://cvucv.com/lucia-ramos.pdf', 'Orientada al marketing digital y recursos humanos.');
 
-INSERT INTO estudiante (usuario_id, codigo_estudiante, carrera, ciclo, resumen_perfil)
-VALUES (3, '20231234', 'Ingeniería de Sistemas', '8', 'Estudiante con interés en desarrollo web.');
-
--- Oferta de ejemplo
+-- ======================================
+-- INSERTS EN TABLA oferta
+-- ======================================
 INSERT INTO oferta (empresa_id, titulo, descripcion, tipo, salario_referencial, modalidad, fecha_cierre)
-VALUES (1, 'Practicante de Desarrollo Web', 'Apoyo en proyectos PHP y MySQL.', 'practicas', 1200.00, 'remoto', '2025-12-31');
+VALUES
+(1, 'Practicante de Desarrollo Web', 'Apoyo en desarrollo de sistemas con PHP, Laravel y MySQL.', 'practicas', 1200.00, 'remoto', '2025-12-31'),
+(1, 'Asistente de Soporte Técnico', 'Brindar soporte a usuarios, mantenimiento de equipos e instalaciones de software.', 'part-time', 1000.00, 'presencial', '2025-11-30'),
+(2, 'Practicante de Logística', 'Apoyo en control de inventarios, guías de remisión y órdenes de compra.', 'practicas', 1100.00, 'mixto', '2025-12-15');
+
+-- ======================================
+-- INSERTS EN TABLA postulacion
+-- ======================================
+INSERT INTO postulacion (oferta_id, estudiante_id, estado_postulacion, comentario_empresa)
+VALUES
+(1, 1, 'enviada', NULL),
+(1, 2, 'revisada', 'Buen perfil, pendiente entrevista.'),
+(3, 3, 'aceptada', 'Seleccionada para prácticas en logística.');
+
+-- ======================================
+-- INSERTS EN TABLA catalogo_carreras
+-- ======================================
+INSERT INTO catalogo_carreras (nombre_carrera)
+VALUES
+('Ingeniería de Sistemas'),
+('Ingeniería Industrial'),
+('Administración de Empresas'),
+('Contabilidad'),
+('Derecho'),
+('Ingeniería Civil');
