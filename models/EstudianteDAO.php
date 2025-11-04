@@ -1,36 +1,41 @@
 <?php
-// modelo/EstudianteDAO.php
+// models/EstudianteDAO.php
 require_once __DIR__ . '/../config/Conexion.php';
 require_once 'Estudiante.php';
 
 class EstudianteDAO {
     private $pdo;
-    public function __construct() { $this->pdo = Conexion::getConnection(); }
+    public function __construct() {
+        $this->pdo = Conexion::getConexion();
+    }
 
-    public function crear($est) {
+    public function crear(Estudiante $e) {
         $sql = "INSERT INTO estudiante (usuario_id, codigo_estudiante, carrera, ciclo, cv_url, resumen_perfil)
-                VALUES (:usuario_id, :codigo, :carrera, :ciclo, :cv_url, :resumen)";
+                VALUES (:uid, :cod, :carr, :ciclo, :cv, :resumen)";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-            ':usuario_id'=>$est->usuario_id, ':codigo'=>$est->codigo_estudiante,
-            ':carrera'=>$est->carrera, ':ciclo'=>$est->ciclo, ':cv_url'=>$est->cv_url, ':resumen'=>$est->resumen_perfil
+            ':uid'=>$e->usuario_id, ':cod'=>$e->codigo_estudiante,
+            ':carr'=>$e->carrera, ':ciclo'=>$e->ciclo,
+            ':cv'=>$e->cv_url, ':resumen'=>$e->resumen_perfil
         ]);
         return $this->pdo->lastInsertId();
     }
 
-    public function obtenerPorUsuarioId($usuario_id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM estudiante WHERE usuario_id = :uid");
-        $stmt->execute([':uid'=>$usuario_id]);
-        $row = $stmt->fetch();
-        return $row ? new Estudiante($row) : null;
+    public function obtenerPorUsuario($usuario_id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM estudiante WHERE usuario_id=:u");
+        $stmt->execute([':u'=>$usuario_id]);
+        $r = $stmt->fetch();
+        return $r ? new Estudiante($r) : null;
     }
 
-    public function actualizar($est) {
-        $sql = "UPDATE estudiante SET codigo_estudiante=:codigo, carrera=:carrera, ciclo=:ciclo, cv_url=:cv_url, resumen_perfil=:resumen WHERE id_estudiante=:id";
+    public function actualizar(Estudiante $e) {
+        $sql = "UPDATE estudiante SET codigo_estudiante=:cod, carrera=:carr, ciclo=:ciclo,
+                cv_url=:cv, resumen_perfil=:resumen WHERE id_estudiante=:id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
-            ':codigo'=>$est->codigo_estudiante, ':carrera'=>$est->carrera, ':ciclo'=>$est->ciclo,
-            ':cv_url'=>$est->cv_url, ':resumen'=>$est->resumen_perfil, ':id'=>$est->id_estudiante
+            ':cod'=>$e->codigo_estudiante, ':carr'=>$e->carrera,
+            ':ciclo'=>$e->ciclo, ':cv'=>$e->cv_url,
+            ':resumen'=>$e->resumen_perfil, ':id'=>$e->id_estudiante
         ]);
     }
 }

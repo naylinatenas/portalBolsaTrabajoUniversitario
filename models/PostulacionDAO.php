@@ -1,41 +1,54 @@
 <?php
-// modelo/PostulacionDAO.php
+// models/PostulacionDAO.php
 require_once __DIR__ . '/../config/Conexion.php';
 require_once 'Postulacion.php';
 
 class PostulacionDAO {
     private $pdo;
-    public function __construct() { $this->pdo = Conexion::getConnection(); }
+    public function __construct() { $this->pdo = Conexion::getConexion(); }
 
-    public function crear($p) {
-        // previene duplicados por constraint UNIQUE
-        $sql = "INSERT INTO postulacion (oferta_id, estudiante_id, comentario_empresa) VALUES (:oferta, :estudiante, :comentario)";
+    public function crear(Postulacion $p) {
+        $sql = "INSERT INTO postulacion (oferta_id, estudiante_id, comentario_empresa)
+                VALUES (:oferta, :estu, :coment)";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([':oferta'=>$p->oferta_id, ':estudiante'=>$p->estudiante_id, ':comentario'=>$p->comentario_empresa]);
+        $stmt->execute([
+            ':oferta'=>$p->oferta_id,
+            ':estu'=>$p->estudiante_id,
+            ':coment'=>$p->comentario_empresa
+        ]);
+        return $this->pdo->lastInsertId();
     }
 
-    public function listarPorOferta($oferta_id) {
-        $stmt = $this->pdo->prepare("SELECT p.*, s.codigo_estudiante, u.nombre_completo, u.correo FROM postulacion p JOIN estudiante s ON s.id_estudiante = p.estudiante_id JOIN usuario u ON u.id_usuario = s.usuario_id WHERE p.oferta_id = :oferta ORDER BY p.fecha_postulacion DESC");
-        $stmt->execute([':oferta'=>$oferta_id]);
+    public function listarPorOferta($id) {
+        $stmt = $this->pdo->prepare("
+            SELECT p.*, u.nombre_completo, u.correo
+            FROM postulacion p
+            JOIN estudiante e ON e.id_estudiante=p.estudiante_id
+            JOIN usuario u ON u.id_usuario=e.usuario_id
+            WHERE p.oferta_id=:id");
+        $stmt->execute([':id'=>$id]);
         return $stmt->fetchAll();
     }
 
-    public function listarPorEstudiante($estudiante_id) {
-        $stmt = $this->pdo->prepare("SELECT p.*, o.titulo, e.razon_social FROM postulacion p JOIN oferta o ON o.id_oferta = p.oferta_id JOIN empresa e ON e.id_empresa = o.empresa_id WHERE p.estudiante_id = :est ORDER BY p.fecha_postulacion DESC");
-        $stmt->execute([':est'=>$estudiante_id]);
+    public function listarPorEstudiante($id) {
+        $stmt = $this->pdo->prepare("
+            SELECT p.*, o.titulo, e.razon_social
+            FROM postulacion p
+            JOIN oferta o ON o.id_oferta=p.oferta_id
+            JOIN empresa e ON e.id_empresa=o.empresa_id
+            WHERE p.estudiante_id=:id ORDER BY p.fecha_postulacion DESC");
+        $stmt->execute([':id'=>$id]);
         return $stmt->fetchAll();
     }
 
-    public function cambiarEstado($id, $estado, $comentario = null) {
-        $sql = "UPDATE postulacion SET estado_postulacion = :estado, comentario_empresa = :comentario WHERE id_postulacion = :id";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([':estado'=>$estado, ':comentario'=>$comentario, ':id'=>$id]);
+    public function cambiarEstado($id, $estado, $coment = null) {
+        $stmt = $this->pdo->prepare("UPDATE postulacion SET estado_postulacion=:e, comentario_empresa=:c WHERE id_postulacion=:id");
+        return $stmt->execute([':e'=>$estado, ':c'=>$coment, ':id'=>$id]);
     }
 
-    public function existePostulacion($oferta_id, $estudiante_id) {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as c FROM postulacion WHERE oferta_id = :o AND estudiante_id = :e");
+    public function existe($oferta_id, $estudiante_id) {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) c FROM postulacion WHERE oferta_id=:o AND estudiante_id=:e");
         $stmt->execute([':o'=>$oferta_id, ':e'=>$estudiante_id]);
-        $r = $stmt->fetch();
-        return $r['c'] > 0;
+        return $stmt->fetch()['c'] > 0;
     }
 }

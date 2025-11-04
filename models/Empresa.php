@@ -1,5 +1,5 @@
 <?php
-// modelo/Empresa.php
+// models/Empresa.php
 class Empresa {
     public $id_empresa;
     public $razon_social;
@@ -11,6 +11,8 @@ class Empresa {
     public $estado;
 
     public function __construct($data = []) {
-        foreach ($data as $k => $v) $this->$k = $v;
+        foreach ($data as $k => $v) {
+            if (property_exists($this, $k)) $this->$k = $v;
+        }
     }
 }
