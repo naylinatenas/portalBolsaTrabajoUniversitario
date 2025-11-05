@@ -105,4 +105,11 @@ class PostulacionDAO
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function eliminarPostulacion($id_postulacion)
+    {
+        $sql = "DELETE FROM postulacion WHERE id_postulacion = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$id_postulacion]);
+    }
 }

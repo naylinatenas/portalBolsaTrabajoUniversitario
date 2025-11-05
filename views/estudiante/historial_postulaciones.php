@@ -28,7 +28,12 @@ if (!$est) {
 ?>
 
 <div class="container mt-4">
-  <h3 class="fw-bold text-primary mb-4">Historial de Postulaciones</h3>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-primary m-0">Historial de Postulaciones</h3>
+    <a href="dashboard.php" class="btn btn-outline-secondary btn-sm">
+      ← Volver
+    </a>
+  </div>
 
   <?php if ($total_postulaciones == 0): ?>
     <div class="alert alert-info">Aún no has postulado a ninguna oferta.</div>
@@ -42,6 +47,7 @@ if (!$est) {
             <th>Fecha</th>
             <th>Estado</th>
             <th>Comentario</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -66,6 +72,18 @@ if (!$est) {
                   —
                 <?php endif; ?>
               </td>
+              <td class="text-center">
+                <?php if (!in_array($p['estado_postulacion'], ['aceptada', 'rechazada'])): ?>
+                  <button class="btn btn-sm btn-outline-danger"
+                    onclick="anularPostulacion(<?= $p['id_postulacion'] ?>)">
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                <?php else: ?>
+                  —
+                <?php endif; ?>
+              </td>
+
+
             </tr>
             <?php if (!empty($p['comentario_empresa'])): ?>
               <!-- Modal Comentario -->
@@ -123,6 +141,24 @@ if (!$est) {
 
   <?php endif; ?>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  function anularPostulacion(id) {
+    Swal.fire({
+      title: "¿Anular postulación?",
+      text: "Esta acción eliminará tu postulación y no podrás recuperarla.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, anular",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "../../controllers/postulacionControlador.php?action=anular&id=" + id;
+      }
+    });
+  }
+</script>
 
 
 <?php include '../layout/footer.php'; ?>

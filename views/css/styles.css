@@ -381,3 +381,32 @@ footer {
 .pagination .page-item.disabled .page-link {
   opacity: 0.5;
 }
+
+/* =======================================================
+   ESTILOS DASHBOARD ESTUDIANTE
+   ======================================================= */
+.hover-elevate {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.hover-elevate:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.12) !important;
+}
+
+.hover-elevate-sm {
+  transition: transform .2s ease;
+}
+.hover-elevate-sm:hover {
+  transform: translateY(-2px);
+}
+
+.card-dash {
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.list-group-item:hover {
+  background: #f8f9fa;
+}

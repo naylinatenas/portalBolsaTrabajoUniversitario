@@ -14,6 +14,7 @@ $bodyClass = ($theme === 'dark') ? 'bg-dark text-white' : '';
   <!-- Bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="/public/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body class="<?= $bodyClass ?>">
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">

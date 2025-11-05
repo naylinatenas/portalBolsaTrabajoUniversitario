@@ -19,7 +19,7 @@ if (!$oferta): ?>
     <hr>
     <p class="mb-4"><?= nl2br(htmlspecialchars($oferta['descripcion'])) ?></p>
 
-    <form action="/PORTALBOLSATRABAJOUNIVERSITARIO/controllers/postulacionControlador.php" method="POST">
+    <form action="../../controllers/postulacionControlador.php" method="POST">
       <input type="hidden" name="action" value="postular">
       <input type="hidden" name="oferta_id" value="<?= $oferta['id_oferta'] ?>">
       <button type="submit" class="btn btn-primario w-100">
