@@ -42,5 +42,6 @@ $postulaciones = $postDAO->listarPorEmpresa($empresa->id_empresa);
     </div>
   <?php endif; ?>
 </div>
-
+        
 <?php include '../layout/footer.php'; ?>
+
