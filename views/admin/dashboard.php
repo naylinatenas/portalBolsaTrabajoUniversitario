@@ -13,7 +13,7 @@ $postDAO = new PostulacionDAO();
 
 $empresas = $empDAO->listar();
 $ofertas = $ofDAO->listar();
-$postulaciones = $postDAO->listar();
+$postulaciones = $postDAO->listarPostulacionesLaborales();
 
 // Estadísticas principales
 $total_empresas = count($empresas);
@@ -35,7 +35,7 @@ $count_postulaciones_semana = count($postulaciones_semana);
 usort($postulaciones, function($a, $b) {
     return strtotime($b['fecha_postulacion']) - strtotime($a['fecha_postulacion']);
 });
-$ultimas_postulaciones = array_slice($postulaciones, 0, 6);
+$ultimas_postulaciones = array_slice($postulaciones, 0, 10);
 ?>
 
 <!DOCTYPE html>
@@ -457,10 +457,6 @@ $ultimas_postulaciones = array_slice($postulaciones, 0, 6);
           <a href="reportes.php" class="action-link">
             <i class="bi bi-graph-up"></i>
             Ver Reportes Generales
-          </a>
-          <a href="exportar.php" class="action-link">
-            <i class="bi bi-download"></i>
-            Exportar Datos
           </a>
         </div>
       </div>

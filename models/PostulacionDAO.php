@@ -80,4 +80,70 @@ class PostulacionDAO
         $r = $stmt->fetch(PDO::FETCH_ASSOC);
         return $r ? intval($r['total']) : 0;
     }
+
+    public function contarPorEstudiante($id_estudiante)
+    {
+        $sql = "SELECT COUNT(*) AS total FROM postulacion WHERE estudiante_id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id_estudiante]);
+        return $stmt->fetch()['total'];
+    }
+
+    public function listarPaginado($id_estudiante, $limit, $offset)
+    {
+        $sql = "SELECT p.*, o.titulo AS titulo_oferta, e.razon_social
+            FROM postulacion p
+            JOIN oferta o ON p.oferta_id = o.id_oferta
+            JOIN empresa e ON o.empresa_id = e.id_empresa
+            WHERE p.estudiante_id = ?
+            ORDER BY p.fecha_postulacion DESC
+            LIMIT ? OFFSET ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(1, $id_estudiante, PDO::PARAM_INT);
+        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+        $stmt->bindValue(3, $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function eliminarPostulacion($id_postulacion)
+    {
+        $sql = "DELETE FROM postulacion WHERE id_postulacion = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$id_postulacion]);
+    }
+
+public function listarPostulacionesLaborales()
+{
+    $sql = "
+        SELECT 
+            p.id_postulacion,
+            p.fecha_postulacion,
+            p.estado_postulacion,
+            p.comentario_empresa,
+            
+            o.titulo AS titulo_oferta,
+            o.tipo AS tipo_oferta, -- Si tienes 'laboral' o 'prácticas'
+            
+            e.razon_social AS nombre_empresa, -- ✅ Campo corregido
+            
+            u.nombre_completo AS nombre_estudiante,
+            u.correo AS correo_estudiante
+
+        FROM postulacion p
+        INNER JOIN oferta o ON p.oferta_id = o.id_oferta
+        INNER JOIN empresa e ON o.empresa_id = e.id_empresa
+        INNER JOIN estudiante est ON p.estudiante_id = est.id_estudiante
+        INNER JOIN usuario u ON est.usuario_id = u.id_usuario
+
+        -- Si deseas solo ofertas laborales descomenta:
+        -- WHERE o.tipo = 'laboral'
+
+        ORDER BY p.fecha_postulacion DESC
+    ";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }
