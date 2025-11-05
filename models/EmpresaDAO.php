@@ -46,6 +46,17 @@ class EmpresaDAO
         return $r ? new Empresa($r) : null;
     }
 
+    /**
+     * Obtener empresa por ID de usuario (para empresas logueadas)
+     */
+    public function obtenerPorUsuario($usuario_id)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM empresa WHERE usuario_id = :uid LIMIT 1");
+        $stmt->execute([':uid' => $usuario_id]);
+        $r = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $r ? new Empresa($r) : null;
+    }
+
     public function actualizar(Empresa $e)
     {
         $sql = "UPDATE empresa SET 
@@ -79,59 +90,40 @@ class EmpresaDAO
      */
     public function eliminar($id)
     {
-        $sql = "UPDATE empresa SET estado = 'inactiva' WHERE id_empresa = :id";
-        $stmt = $this->pdo->prepare($sql);
+        return $this->cambiarEstado($id, 'inactiva');
+    }
+
+    /**
+     * Eliminación física - borra el registro completamente
+     */
+    public function eliminarFisico($id)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM empresa WHERE id_empresa = :id");
         return $stmt->execute([':id' => $id]);
     }
 
     /**
-     * Verifica si la empresa tiene ofertas asociadas
+     * Contar empresas por estado
      */
-    public function tieneOfertas($id)
+    public function contarPorEstado($estado)
     {
-        $sql = "SELECT COUNT(*) as total FROM oferta WHERE empresa_id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $resultado['total'] > 0;
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM empresa WHERE estado = :estado");
+        $stmt->execute([':estado' => $estado]);
+        return $stmt->fetchColumn();
     }
 
     /**
-     * Eliminación física - borra permanentemente la empresa
+     * Buscar empresas por término
      */
-    public function eliminarFisico($id)
+    public function buscar($termino)
     {
-        try {
-            // Verificar si tiene ofertas
-            if ($this->tieneOfertas($id)) {
-                return [
-                    'success' => false, 
-                    'message' => 'No se puede eliminar: la empresa tiene ofertas asociadas'
-                ];
-            }
-            
-            $sql = "DELETE FROM empresa WHERE id_empresa = :id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([':id' => $id]);
-            
-            return [
-                'success' => true, 
-                'message' => 'Empresa eliminada correctamente'
-            ];
-            
-        } catch (Exception $e) {
-            return [
-                'success' => false, 
-                'message' => 'Error al eliminar: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    public function obtenerPorUsuario($usuario_id)
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM empresa WHERE usuario_id = :uid LIMIT 1");
-        $stmt->execute([':uid' => $usuario_id]);
-        $r = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $r ? new Empresa($r) : null;
+        $stmt = $this->pdo->prepare("SELECT e.*, u.correo 
+                                    FROM empresa e 
+                                    JOIN usuario u ON e.usuario_id = u.id_usuario 
+                                    WHERE e.razon_social LIKE :termino 
+                                    OR e.ruc LIKE :termino 
+                                    ORDER BY e.razon_social ASC");
+        $stmt->execute([':termino' => "%$termino%"]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -1,0 +1,46 @@
+body { font-family: "Poppins", "Segoe UI", sans-serif; background: #f4f6fb; transition: 0.3s; }
+.main-container { max-width: 1100px; margin: 2rem auto; }
+
+.page-header {
+  background: linear-gradient(135deg, #1e88e5, #1565c0);
+  border-radius: 16px;
+  padding: 1.8rem;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(30,136,229,0.3);
+}
+.btn-header {
+  background: rgba(255,255,255,0.2);
+  border: 2px solid white;
+  color: white;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  transition: 0.3s;
+}
+.btn-header:hover { background: white; color: #1e3c72; transform: translateY(-2px); }
+
+.table-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  padding: 1rem;
+}
+
+.badge-activa { background: #e8f5e9; color: #2e7d32; }
+.badge-cerrada { background: #ffebee; color: #c62828; }
+.badge-pausada { background: #fff8e1; color: #ef6c00; }
+
+/* 🌙 Modo oscuro */
+body.modo-oscuro { background: #121212; color: #e0e0e0; }
+body.modo-oscuro .page-header { background: linear-gradient(135deg, #0d1b2a, #1b263b); }
+body.modo-oscuro .table-section { background: #1e1e1e; color: #fff; }
+
+#btnModoOscuro {
+  position: fixed; bottom: 20px; right: 20px;
+  border-radius: 50%; width: 50px; height: 50px;
+  background: #1e88e5; color: white; font-size: 1.4rem;
+  border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+#btnModoOscuro:hover { background: #1565c0; transform: scale(1.1); }

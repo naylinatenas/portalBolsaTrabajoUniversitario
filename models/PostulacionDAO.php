@@ -80,36 +80,4 @@ class PostulacionDAO
         $r = $stmt->fetch(PDO::FETCH_ASSOC);
         return $r ? intval($r['total']) : 0;
     }
-
-    public function contarPorEstudiante($id_estudiante)
-    {
-        $sql = "SELECT COUNT(*) AS total FROM postulacion WHERE estudiante_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$id_estudiante]);
-        return $stmt->fetch()['total'];
-    }
-
-    public function listarPaginado($id_estudiante, $limit, $offset)
-    {
-        $sql = "SELECT p.*, o.titulo AS titulo_oferta, e.razon_social
-            FROM postulacion p
-            JOIN oferta o ON p.oferta_id = o.id_oferta
-            JOIN empresa e ON o.empresa_id = e.id_empresa
-            WHERE p.estudiante_id = ?
-            ORDER BY p.fecha_postulacion DESC
-            LIMIT ? OFFSET ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(1, $id_estudiante, PDO::PARAM_INT);
-        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
-        $stmt->bindValue(3, $offset, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function eliminarPostulacion($id_postulacion)
-    {
-        $sql = "DELETE FROM postulacion WHERE id_postulacion = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$id_postulacion]);
-    }
 }
