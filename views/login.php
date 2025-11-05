@@ -77,9 +77,11 @@ $correo_recordado = $_COOKIE['correo_recordado'] ?? '';
       </button>
     </form>
     
-    <div class="demo-info">
+    <div class="demo-info" align="left">
       <p>🔐 Cuenta de prueba</p>
-      <small>admin@ucv.edu.pe / admin123</small>
+      <small>Administrador: admin@ucv.edu.pe / admin123</small><br>
+      <small>Empresa: contacto@techcorp.com / tech123</small><br>
+      <small>Estudiante: maria.lopez@ucv.edu.pe / maria123</small>
     </div>
   </div>
 </div>
