@@ -6,6 +6,7 @@ require_once 'Postulacion.php';
 class PostulacionDAO
 {
     private $pdo;
+    
     public function __construct()
     {
         $this->pdo = Conexion::conectar();
@@ -42,7 +43,6 @@ class PostulacionDAO
         return $this->pdo->query($sql)->fetchAll();
     }
 
-
     public function listarPorEstudiante($id)
     {
         $stmt = $this->pdo->prepare("
@@ -71,11 +71,11 @@ class PostulacionDAO
     public function contarPorEmpresa($empresa_id)
     {
         $stmt = $this->pdo->prepare("
-        SELECT COUNT(*) AS total
-        FROM postulacion p
-        JOIN oferta o ON o.id_oferta = p.oferta_id
-        WHERE o.empresa_id = :emp
-    ");
+            SELECT COUNT(*) AS total
+            FROM postulacion p
+            JOIN oferta o ON o.id_oferta = p.oferta_id
+            WHERE o.empresa_id = :emp
+        ");
         $stmt->execute([':emp' => $empresa_id]);
         $r = $stmt->fetch(PDO::FETCH_ASSOC);
         return $r ? intval($r['total']) : 0;
@@ -113,7 +113,37 @@ class PostulacionDAO
         return $stmt->execute([$id_postulacion]);
     }
 
-public function listarPostulacionesLaborales()
+    public function listarPostulacionesLaborales()
+    {
+        $sql = "
+            SELECT 
+                p.id_postulacion,
+                p.fecha_postulacion,
+                p.estado_postulacion,
+                p.comentario_empresa,
+                
+                o.titulo AS titulo_oferta,
+                o.tipo AS tipo_oferta,
+                
+                e.razon_social AS nombre_empresa,
+                
+                u.nombre_completo AS nombre_estudiante,
+                u.correo AS correo_estudiante
+
+            FROM postulacion p
+            INNER JOIN oferta o ON p.oferta_id = o.id_oferta
+            INNER JOIN empresa e ON o.empresa_id = e.id_empresa
+            INNER JOIN estudiante est ON p.estudiante_id = est.id_estudiante
+            INNER JOIN usuario u ON est.usuario_id = u.id_usuario
+
+            ORDER BY p.fecha_postulacion DESC
+        ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+public function listarPorEmpresa($id_empresa)
 {
     $sql = "
         SELECT 
@@ -123,9 +153,9 @@ public function listarPostulacionesLaborales()
             p.comentario_empresa,
             
             o.titulo AS titulo_oferta,
-            o.tipo AS tipo_oferta, -- Si tienes 'laboral' o 'prácticas'
+            o.tipo AS tipo_oferta,
             
-            e.razon_social AS nombre_empresa, -- ✅ Campo corregido
+            e.razon_social AS nombre_empresa,
             
             u.nombre_completo AS nombre_estudiante,
             u.correo AS correo_estudiante
@@ -136,14 +166,13 @@ public function listarPostulacionesLaborales()
         INNER JOIN estudiante est ON p.estudiante_id = est.id_estudiante
         INNER JOIN usuario u ON est.usuario_id = u.id_usuario
 
-        -- Si deseas solo ofertas laborales descomenta:
-        -- WHERE o.tipo = 'laboral'
+        WHERE o.empresa_id = :id_empresa
 
         ORDER BY p.fecha_postulacion DESC
     ";
+    
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([':id_empresa' => $id_empresa]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
 }
