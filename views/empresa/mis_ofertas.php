@@ -17,6 +17,14 @@ if ($empresa && isset($empresa->id_empresa)) {
 } else {
   $ofertas = [];
 }
+
+// Mostrar mensajes de sesión
+$mensaje = isset($_SESSION['mensaje']) ? $_SESSION['mensaje'] : null;
+$tipo_mensaje = isset($_SESSION['tipo_mensaje']) ? $_SESSION['tipo_mensaje'] : 'info';
+if ($mensaje) {
+    unset($_SESSION['mensaje']);
+    unset($_SESSION['tipo_mensaje']);
+}
 ?>
 
 <!-- Bootstrap Icons -->
@@ -144,6 +152,13 @@ body.modo-oscuro .table thead {
   background: #2a2a2a;
   color: #e8eaed;
 }
+body.modo-oscuro .table {
+  color: #e8eaed;
+}
+body.modo-oscuro .modal-content {
+  background: #1f1f1f;
+  color: #e8eaed;
+}
 
 /* BOTÓN MODO OSCURO */
 #btnModoOscuro {
@@ -172,6 +187,15 @@ body.modo-oscuro .table thead {
 </style>
 
 <div class="container">
+  <!-- Mensaje de alerta -->
+  <?php if ($mensaje): ?>
+  <div class="alert alert-<?php echo $tipo_mensaje; ?> alert-dismissible fade show mt-3" role="alert">
+    <i class="bi bi-<?php echo $tipo_mensaje === 'success' ? 'check-circle' : ($tipo_mensaje === 'danger' ? 'exclamation-triangle' : 'info-circle'); ?>"></i>
+    <?php echo htmlspecialchars($mensaje); ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <?php endif; ?>
+
   <!-- ENCABEZADO AZUL -->
   <div class="header-section">
     <div class="info">
@@ -240,6 +264,7 @@ body.modo-oscuro .table thead {
                   <a href="postulaciones_recibidas.php?id=<?= $o['id_oferta'] ?>" class="btn btn-outline-info btn-sm me-2" title="Ver Postulaciones">
                     <i class="bi bi-people"></i>
                   </a>
+                  
                   <?php if ($estado == 'activa'): ?>
                     <a href="/PORTALBOLSATRABAJOUNIVERSITARIO/controllers/ofertaControlador.php?action=pausar&id=<?= $o['id_oferta'] ?>" 
                       class="btn btn-outline-warning btn-sm me-2" title="Pausar">
@@ -251,11 +276,15 @@ body.modo-oscuro .table thead {
                       <i class="bi bi-play-circle"></i>
                     </a>
                   <?php endif; ?>
-                  <a href="/PORTALBOLSATRABAJOUNIVERSITARIO/controllers/ofertaControlador.php?action=eliminar&id=<?= $o['id_oferta'] ?>" 
-                    onclick="return confirm('¿Deseas eliminar esta oferta permanentemente?')" 
-                    class="btn btn-outline-danger btn-sm" title="Eliminar">
-                    <i class="bi bi-x-circle"></i>
-                  </a>
+                  
+                  <!-- BOTÓN ELIMINAR -->
+                  <button class="btn btn-outline-danger btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEliminar"
+                    data-id="<?= $o['id_oferta'] ?>"
+                    data-titulo="<?= htmlspecialchars($o['titulo']) ?>">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -325,6 +354,43 @@ body.modo-oscuro .table thead {
   </div>
 </div>
 
+<!-- MODAL ELIMINAR OFERTA -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="/PORTALBOLSATRABAJOUNIVERSITARIO/controllers/ofertaControlador.php" method="POST">
+        <input type="hidden" name="action" value="eliminar_oferta">
+        <input type="hidden" name="id_oferta" id="eliminar_id_oferta">
+        
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalEliminarLabel">
+            <i class="bi bi-trash"></i> Confirmar Eliminación
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        
+        <div class="modal-body text-center py-4">
+          <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+          <h5 class="mt-3">¿Estás seguro de eliminar esta oferta?</h5>
+          <p class="text-muted mb-1">
+            <strong id="eliminar_titulo"></strong>
+          </p>
+          <p class="text-muted small">Esta acción no se puede deshacer.</p>
+        </div>
+        
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- 🌙 BOTÓN MODO OSCURO -->
 <button id="btnModoOscuro"><i id="iconoModo" class="bi bi-moon-fill"></i></button>
 
@@ -349,7 +415,7 @@ btnModo.addEventListener('click', () => {
   localStorage.setItem('modoOscuro', activo);
 });
 
-// 🛠️ Llenar datos del modal
+// 🛠️ Llenar datos del modal EDITAR
 document.querySelectorAll('.btnEditar').forEach(btn => {
   btn.addEventListener('click', () => {
     document.getElementById('editar_id_oferta').value = btn.dataset.id;
@@ -360,6 +426,16 @@ document.querySelectorAll('.btnEditar').forEach(btn => {
     document.getElementById('editar_estado').value = btn.dataset.estado;
   });
 });
+
+// 🗑️ Llenar datos del modal ELIMINAR
+const modalEliminar = document.getElementById('modalEliminar');
+if (modalEliminar) {
+  modalEliminar.addEventListener('show.bs.modal', function(event) {
+    const button = event.relatedTarget;
+    document.getElementById('eliminar_id_oferta').value = button.getAttribute('data-id');
+    document.getElementById('eliminar_titulo').textContent = button.getAttribute('data-titulo');
+  });
+}
 </script>
 
 <?php include '../layout/footer.php'; ?>
