@@ -10,7 +10,6 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'admin') {
     exit;
 }
 
-include '../layout/header.php';
 require_once __DIR__ . '/../../models/EmpresaDAO.php';
 
 try {
@@ -28,6 +27,106 @@ if ($mensaje) {
     unset($_SESSION['tipo_mensaje']);
 }
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Empresas | Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    .card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { 
+      transform: translateY(-3px); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1)!important; 
+    }
+    .table tbody tr {
+      transition: background-color 0.2s;
+    }
+    .table tbody tr:hover { 
+      background-color: rgba(var(--bs-primary-rgb), 0.05); 
+    }
+    
+    /* BOTÓN DE MODO OSCURO / CLARO - ABAJO A LA DERECHA */
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 25px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid #dee2e6;
+      color: #212529;
+      font-size: 1.25rem;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Efecto hover */
+    .theme-toggle:hover {
+      transform: translateY(-3px);
+      background: #0d6efd;
+      color: white;
+      border-color: #0d6efd;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Efecto clic */
+    .theme-toggle:active {
+      transform: translateY(0);
+    }
+
+    /* Tema oscuro */
+    [data-theme="dark"] {
+      background-color: #212529;
+      color: #f8f9fa;
+    }
+    
+    [data-theme="dark"] .theme-toggle {
+      background: #343a40;
+      color: #f8f9fa;
+      border-color: #495057;
+    }
+    
+    [data-theme="dark"] .card {
+      background-color: #343a40;
+      color: #f8f9fa;
+    }
+    
+    [data-theme="dark"] .table {
+      color: #f8f9fa;
+    }
+    
+    [data-theme="dark"] .table-light {
+      background-color: #495057;
+      color: #f8f9fa;
+    }
+
+    /* Adaptación en móviles */
+    @media (max-width: 768px) {
+      .theme-toggle {
+        bottom: 15px;
+        right: 15px;
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<?php include '../layout/header.php'; ?>
 
 <div class="container mt-4">
   <!-- Mensaje de alerta -->
@@ -252,9 +351,16 @@ if ($mensaje) {
   </div>
 </div>
 
-<!-- Script -->
+<!-- BOTÓN DE MODO OSCURO / CLARO -->
+<button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
+  <i class="bi bi-moon-fill"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // === BÚSQUEDA EN TABLA ===
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('keyup', function() {
@@ -267,6 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // === MODAL EDITAR ===
   const modalEditar = document.getElementById('modalEditar');
   if (modalEditar) {
     modalEditar.addEventListener('show.bs.modal', function(event) {
@@ -278,6 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // === MODAL ELIMINAR ===
   const modalEliminar = document.getElementById('modalEliminar');
   if (modalEliminar) {
     modalEliminar.addEventListener('show.bs.modal', function(event) {
@@ -286,23 +394,37 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('deleteRazon').textContent = btn.getAttribute('data-razon');
     });
   }
+
+  // === CAMBIO DE TEMA OSCURO/CLARO ===
+  const themeToggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  const icon = themeToggle.querySelector('i');
+  
+  // Obtener tema guardado o usar 'light'
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  html.setAttribute('data-theme', currentTheme);
+  updateIcon(currentTheme);
+  
+  themeToggle.addEventListener('click', () => {
+    const current = html.getAttribute('data-theme');
+    const newTheme = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateIcon(newTheme);
+  });
+  
+  function updateIcon(theme) {
+    if (theme === 'dark') {
+      icon.classList.remove('bi-moon-fill');
+      icon.classList.add('bi-sun-fill');
+    } else {
+      icon.classList.remove('bi-sun-fill');
+      icon.classList.add('bi-moon-fill');
+    }
+  }
 });
 </script>
 
-<style>
-.card {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.card:hover { 
-  transform: translateY(-3px); 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1)!important; 
-}
-.table tbody tr {
-  transition: background-color 0.2s;
-}
-.table tbody tr:hover { 
-  background-color: rgba(var(--bs-primary-rgb), 0.05); 
-}
-</style>
-
 <?php include '../layout/footer.php'; ?>
+</body>
+</html>
