@@ -31,24 +31,6 @@ $postulaciones_semana = array_filter($postulaciones, function($p) use ($fecha_li
 });
 $count_postulaciones_semana = count($postulaciones_semana);
 
-// Top empresas
-$publicaciones_por_empresa = [];
-foreach ($ofertas as $oferta) {
-    $empresa_id = $oferta['empresa_id'];
-    if (!isset($publicaciones_por_empresa[$empresa_id])) {
-        $publicaciones_por_empresa[$empresa_id] = [
-            'nombre' => $oferta['razon_social'] ?? 'Sin nombre',
-            'count' => 0
-        ];
-    }
-    $publicaciones_por_empresa[$empresa_id]['count']++;
-}
-
-usort($publicaciones_por_empresa, function($a, $b) {
-    return $b['count'] - $a['count'];
-});
-$top_empresas = array_slice($publicaciones_por_empresa, 0, 5);
-
 // Últimas postulaciones
 usort($postulaciones, function($a, $b) {
     return strtotime($b['fecha_postulacion']) - strtotime($a['fecha_postulacion']);
@@ -64,7 +46,6 @@ $ultimas_postulaciones = array_slice($postulaciones, 0, 6);
   <title>Dashboard Admin | Bolsa de Trabajo</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { 
       background: #f5f7fa; 
@@ -338,25 +319,6 @@ $ultimas_postulaciones = array_slice($postulaciones, 0, 6);
       font-weight: 600;
     }
     
-    /* Chart */
-    .chart-container { 
-      height: 320px; 
-      margin-top: 1rem; 
-    }
-    
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: #6c757d;
-    }
-    
-    .empty-state i {
-      font-size: 3rem;
-      color: #dee2e6;
-      margin-bottom: 1rem;
-    }
-    
     @media (max-width: 768px) {
       .admin-wrapper { 
         padding: 1rem; 
@@ -546,74 +508,9 @@ $ultimas_postulaciones = array_slice($postulaciones, 0, 6);
       </div>
     </div>
     <?php endif; ?>
-
-    <!-- Gráfico Top Empresas -->
-    <?php if (!empty($top_empresas)): ?>
-    <div class="content-section">
-      <h2 class="section-title">
-        <i class="bi bi-bar-chart"></i>
-        Top 5 Empresas con Más Ofertas
-      </h2>
-      <div class="chart-container">
-        <canvas id="empresasChart"></canvas>
-      </div>
-    </div>
-    <?php endif; ?>
   </div>
 
   <?php include '../layout/footer.php'; ?>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <?php if (!empty($top_empresas)): ?>
-  <script>
-    new Chart(document.getElementById('empresasChart'), {
-      type: 'bar',
-      data: {
-        labels: <?= json_encode(array_column($top_empresas, 'nombre')) ?>,
-        datasets: [{
-          label: 'Ofertas Publicadas',
-          data: <?= json_encode(array_column($top_empresas, 'count')) ?>,
-          backgroundColor: ['#1e88e5', '#42a5f5', '#64b5f6', '#90caf9', '#bbdefb'],
-          borderRadius: 8,
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { 
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            padding: 12,
-            cornerRadius: 8,
-            titleFont: { size: 14, weight: 'bold' },
-            bodyFont: { size: 13 }
-          }
-        },
-        scales: { 
-          y: { 
-            beginAtZero: true, 
-            ticks: { 
-              stepSize: 1,
-              font: { size: 12 }
-            },
-            grid: {
-              color: 'rgba(0,0,0,0.05)'
-            }
-          },
-          x: {
-            ticks: {
-              font: { size: 12 }
-            },
-            grid: {
-              display: false
-            }
-          }
-        }
-      }
-    });
-  </script>
-  <?php endif; ?>
 </body>
 </html>
