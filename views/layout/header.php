@@ -28,11 +28,6 @@ $bodyClass = ($theme === 'dark') ? 'bg-dark text-white' : '';
           <?php else: ?>
           <li class="nav-item"><a class="nav-link" href="/views/login.php">Iniciar sesión</a></li>
         <?php endif; ?>
-        <li class="nav-item">
-          <form method="post" action="/vista/toggle_tema.php" class="d-inline">
-            <button type="submit" class="btn btn-link nav-link"><?= ($theme==='dark') ? 'Modo Claro' : 'Modo Oscuro' ?></button>
-          </form>
-        </li>
       </ul>
     </div>
   </div>

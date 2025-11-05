@@ -232,3 +232,33 @@ h2.fw-bold, h4.fw-bold {
   margin-top: .5rem;
   margin-bottom: 1.5rem;
 }
+
+/* =======================================================
+   ESTILOS PAGINACION - HISTORIAL DE POSTULACIONES
+   ======================================================= */
+
+.pagination .page-link {
+  border: none;
+  margin: 0 4px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+}
+
+.pagination .page-item.active .page-link {
+  background: #4f46e5;
+  color: white;
+  font-weight: bold;
+}
+
+.pagination .page-item.disabled .page-link {
+  opacity: 0.5;
+}
+
+body {
+  background-color: var(--color-fondo) !important;
+}
+main, section, .container {
+  background-color: transparent !important;
+}

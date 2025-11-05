@@ -16,7 +16,7 @@
 /* ------------------ ESTILOS GLOBALES ------------------ */
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: var(--color-fondo);
+  background-color: var(--color-fondo) !important;
   color: var(--color-texto);
   margin: 0;
   padding: 0;
@@ -26,8 +26,10 @@ body {
 /* ------------------ NAVBAR ------------------ */
 .navbar {
   background: linear-gradient(90deg, var(--color-primario), var(--color-secundario));
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.2rem 2rem; /* aumenta el alto visual */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); /* sombra más grande y suave */
 }
+
 
 .navbar-brand {
   font-weight: 600;
@@ -359,64 +361,516 @@ footer {
   font-size: 0.85rem;
 }
 
-/* =======================================================
-   ESTILOS PAGINACION - HISTORIAL DE POSTULACIONES
-   ======================================================= */
+body {
+  background-color: var(--color-fondo) !important;
+}
+main, section, .container {
+  background-color: transparent !important;
+}
 
-.pagination .page-link {
+/* ============================================
+   MODO OSCURO - BOTÓN FLOTANTE
+   ============================================ */
+.btn-modo-oscuro {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #8ab4f8;
   border: none;
-  margin: 0 4px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: #fff;
-  color: #333;
+  color: #202124;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.pagination .page-item.active .page-link {
-  background: #4f46e5;
-  color: white;
-  font-weight: bold;
+.btn-modo-oscuro:hover {
+  background: #aecbfa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.pagination .page-item.disabled .page-link {
-  opacity: 0.5;
+.btn-modo-oscuro:active {
+  transform: scale(0.95);
 }
+
+.btn-modo-oscuro svg {
+  transition: all 0.3s ease;
+}
+
+/* ============================================
+   ESTILOS DEL MODO OSCURO SIMPLE
+   ============================================ */
+body.modo-oscuro {
+  background-color: #3c4043 !important;
+  color: #e8eaed;
+}
+
+/* ... [Todo tu bloque de modo oscuro existente aquí sin cambios] ... */
 
 /* =======================================================
-   ESTILOS DASHBOARD ESTUDIANTE
+   ESTRUCTURA BASE Y FOOTER FIJO
    ======================================================= */
-/* .hover-elevate {
-  transition: all .25s ease-in-out;
-  cursor: pointer;
-}
-.hover-elevate:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.hover-elevate-sm:hover {
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-fondo);
+}
+
+main {
+  flex: 1;
+}
+
+footer {
+  background-color: #ffffff;
+  border-top: 1px solid #ddd;
+  color: #555;
+  font-size: 1rem; /* antes 0.85rem → texto más grande */
+  padding: 20px 0; /* antes 10px → más alto */
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10; /* antes 100 → más bajo que el modal */
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08); /* sombra superior suave */
+}
+
+footer a {
+  color: #0d47a1;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer a:hover {
+  color: #1565c0;
+}
+
+
+/* Asegurar que el modal y el fondo del modal queden encima */
+.modal,
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+
+/* =======================================================
+   PANEL HEADER Y TARJETAS ESTADÍSTICAS
+   ======================================================= */
+.panel-header {
+  background: var(--color-blanco);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-card);
+  margin-bottom: 2rem;
+}
+
+.panel-header h1 {
+  color: var(--color-primario);
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.stats-card {
+  background-color: var(--color-blanco);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.stats-card .card-body {
+  padding: 2rem;
+  text-align: center;
+}
+
+.stats-card h5 {
+  color: var(--color-texto);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.stats-card .number {
+  color: var(--color-primario);
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.btn-ver {
+  background-color: var(--color-primario);
+  border: none;
+  border-radius: var(--radius);
+  color: var(--color-blanco);
+  padding: 10px 24px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-ver:hover {
+  background-color: var(--color-secundario);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.10) !important;
+  box-shadow: 0 4px 8px rgba(13, 71, 161, 0.3);
 }
 
-.btn-primario {
-  background: #0d6efd;
-  color: #fff;
+/* ============================================
+   ESTILOS DEL MODO OSCURO SIMPLE
+============================================ */
+
+body.modo-oscuro {
+  background-color: #3c4043 !important;
+  color: #e8eaed;
+}
+
+/* ===============================
+   NAVBAR - NEGRO
+=============================== */
+body.modo-oscuro .navbar {
+  background: #202124 !important;
+  box-shadow: none;
+  border-bottom: 1px solid #3c4043;
+}
+
+body.modo-oscuro .navbar-brand,
+body.modo-oscuro .nav-link {
+  color: #e8eaed !important;
+}
+
+body.modo-oscuro .nav-link:hover {
+  color: #8ab4f8 !important;
+}
+
+/* ===============================
+   CARDS - PLOMO
+=============================== */
+body.modo-oscuro .card {
+  background-color: #3c4043;
+  color: #e8eaed;
+  border: 1px solid #5f6368;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+body.modo-oscuro .card:hover {
+  background-color: #444548;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ===============================
+   TÍTULOS
+=============================== */
+body.modo-oscuro h1,
+body.modo-oscuro h2,
+body.modo-oscuro h3,
+body.modo-oscuro h4,
+body.modo-oscuro h5,
+body.modo-oscuro h6 {
+  color: #e8eaed;
+}
+
+body.modo-oscuro .text-primary,
+body.modo-oscuro .text-primary h3 {
+  color: #8ab4f8 !important;
+}
+
+/* ===============================
+   BOTONES
+=============================== */
+body.modo-oscuro .btn-primario {
+  background-color: #ffffff;
+  color: #202124;
   border: none;
-}
-.btn-primario:hover {
-  background: #0b5ed7;
-  color: #fff;
-}
-
-
-.card-dash {
-  border: none;
-  border-radius: 1rem;
-  cursor: pointer;
-  position: relative;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.list-group-item:hover {
-  background: #f8f9fa;
-} */
+body.modo-oscuro .btn-primario:hover {
+  background-color: #f1f3f4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  color: #202124;
+  transform: translateY(-2px);
+}
+
+body.modo-oscuro .btn-outline-primary {
+  border: 1px solid #5f6368;
+  color: #e8eaed;
+  background-color: transparent;
+}
+
+body.modo-oscuro .btn-outline-primary:hover {
+  background-color: #3c4043;
+  border-color: #8ab4f8;
+  color: #8ab4f8;
+}
+
+/* ===============================
+   ICONOS
+=============================== */
+body.modo-oscuro .bi {
+  color: #8ab4f8;
+}
+
+/* ===============================
+   TABLAS
+=============================== */
+body.modo-oscuro .table {
+  background-color: #3c4043;
+  color: #e8eaed;
+  border-color: #5f6368;
+}
+
+body.modo-oscuro .table thead {
+  background-color: #202124;
+  color: #e8eaed;
+}
+
+body.modo-oscuro .table tbody tr {
+  border-color: #5f6368;
+}
+
+body.modo-oscuro .table tbody tr:hover {
+  background-color: #444548;
+}
+
+body.modo-oscuro .table tbody td {
+  border-color: #5f6368;
+}
+
+/* ===============================
+   FORMULARIOS
+=============================== */
+body.modo-oscuro .form-control,
+body.modo-oscuro .form-select {
+  background-color: #3c4043;
+  border: 1px solid #5f6368;
+  color: #e8eaed;
+}
+
+body.modo-oscuro .form-control:focus,
+body.modo-oscuro .form-select:focus {
+  background-color: #3c4043;
+  border-color: #8ab4f8;
+  color: #e8eaed;
+  box-shadow: 0 0 0 0.2rem rgba(138, 180, 248, 0.25);
+}
+
+body.modo-oscuro .form-control::placeholder {
+  color: #9aa0a6;
+}
+
+body.modo-oscuro .form-floating > label {
+  color: #9aa0a6;
+}
+
+/* ===============================
+   BADGES
+=============================== */
+body.modo-oscuro .badge {
+  background-color: #5f6368;
+  color: #e8eaed;
+}
+
+body.modo-oscuro .badge-activa {
+  background-color: #1e8e3e;
+  color: #81c995;
+}
+
+body.modo-oscuro .badge-inactiva {
+  background-color: #d93025;
+  color: #f28b82;
+}
+
+/* ===============================
+   FOOTER - NEGRO
+=============================== */
+body.modo-oscuro footer {
+  background-color: #202124;
+  color: #9aa0a6;
+  border-top: 1px solid #3c4043;
+}
+
+body.modo-oscuro footer a {
+  color: #8ab4f8;
+}
+
+body.modo-oscuro footer a:hover {
+  color: #aecbfa;
+}
+
+/* ===============================
+   PANEL HEADER
+=============================== */
+body.modo-oscuro .panel-header {
+  background-color: #3c4043;
+  border: 1px solid #5f6368;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ===============================
+   ALERTAS
+=============================== */
+body.modo-oscuro .alert {
+  background-color: #3c4043;
+  color: #e8eaed;
+  border-color: #5f6368;
+}
+
+body.modo-oscuro .alert-success {
+  background-color: #0d652d;
+  color: #81c995;
+  border-left: 4px solid #1e8e3e;
+}
+
+body.modo-oscuro .alert-danger {
+  background-color: #8c1d18;
+  color: #f28b82;
+  border-left: 4px solid #d93025;
+}
+
+body.modo-oscuro .alert-warning {
+  background-color: #77370d;
+  color: #fdd663;
+  border-left: 4px solid #f9ab00;
+}
+
+/* ===============================
+   CONTENEDORES ESPECIALES
+=============================== */
+body.modo-oscuro .offers-container,
+body.modo-oscuro .pedido-box,
+body.modo-oscuro .menu-box {
+  background-color: #3c4043;
+  border-top: 3px solid #8ab4f8;
+  border: 1px solid #5f6368;
+}
+
+/* ===============================
+   STATS CARDS
+=============================== */
+body.modo-oscuro .stats-card {
+  background-color: #3c4043;
+  border: 1px solid #5f6368;
+}
+
+body.modo-oscuro .stats-card:hover {
+  background-color: #444548;
+  border-color: #8ab4f8;
+}
+
+body.modo-oscuro .stats-card .number {
+  color: #8ab4f8;
+}
+
+/* ===============================
+   BOTONES DE ACCIÓN
+=============================== */
+body.modo-oscuro .btn-edit {
+  background-color: #8ab4f8;
+  color: #202124;
+}
+
+body.modo-oscuro .btn-edit:hover {
+  background-color: #aecbfa;
+}
+
+body.modo-oscuro .btn-delete {
+  background-color: #f28b82;
+  color: #202124;
+}
+
+body.modo-oscuro .btn-delete:hover {
+  background-color: #f6aea9;
+}
+
+/* ===============================
+   SIDEBAR
+=============================== */
+body.modo-oscuro .sidebar {
+  background: #202124;
+  border-right: 1px solid #3c4043;
+}
+
+body.modo-oscuro .sidebar-menu a:hover {
+  background-color: #3c4043;
+}
+
+/* ===============================
+   LOGIN
+=============================== */
+body.modo-oscuro .login-card {
+  background-color: #3c4043;
+  border: 1px solid #5f6368;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+body.modo-oscuro .login-wrapper {
+  background: #3c4043;
+}
+
+body.modo-oscuro .login-wrapper::before,
+body.modo-oscuro .login-wrapper::after {
+  display: none;
+}
+
+/* ===============================
+   CONTENEDOR PRINCIPAL
+=============================== */
+body.modo-oscuro .container {
+  background-color: transparent !important;
+}
+
+body.modo-oscuro main,
+body.modo-oscuro section {
+  background-color: transparent !important;
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+@media (max-width: 768px) {
+  .btn-modo-oscuro {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .btn-modo-oscuro svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ===============================
+   TRANSICIONES SUAVES
+=============================== */
+body,
+.card,
+.navbar,
+.btn-primario,
+.table,
+.form-control,
+footer {
+  transition: all 0.3s ease;
+}

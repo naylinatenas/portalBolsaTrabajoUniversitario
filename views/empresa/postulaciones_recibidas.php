@@ -10,7 +10,7 @@ $usuario_id = $_SESSION['id_usuario'];
 $empresa = $empresaDAO->obtenerPorUsuario($usuario_id);
 $postulaciones = $postDAO->listarPorEmpresa($empresa->id_empresa);
 ?>
-
+<link href="../css/styles.css" rel="stylesheet">
 <div class="container mt-4">
   <h3 class="fw-bold text-primary mb-4">Postulaciones Recibidas</h3>
 
