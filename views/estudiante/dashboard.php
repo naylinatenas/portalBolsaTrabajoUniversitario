@@ -53,7 +53,12 @@ $ofertas_recientes = array_slice($ofertas_activas, 0, 5);
   </div>
 
   <div class="mt-5">
-    <h4 class="fw-bold mb-3">📌 Ofertas recientes</h4>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="fw-bold mb-0">📌 Ofertas recientes</h4>
+      <a href="ofertas.php" class="btn btn-outline-primary btn-sm">
+        Ver más →
+      </a>
+    </div>
 
     <?php if (count($ofertas_recientes) > 0): ?>
       <div class="list-group shadow-sm">
