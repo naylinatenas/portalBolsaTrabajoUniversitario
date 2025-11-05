@@ -386,19 +386,31 @@ footer {
    ESTILOS DASHBOARD ESTUDIANTE
    ======================================================= */
 .hover-elevate {
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: all .25s ease-in-out;
+  cursor: pointer;
 }
 .hover-elevate:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,.12) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
 }
 
-.hover-elevate-sm {
-  transition: transform .2s ease;
-}
+/* Versión mini (para botones pequeños) */
 .hover-elevate-sm:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10) !important;
 }
+
+/* Botón primario custom */
+.btn-primario {
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+}
+.btn-primario:hover {
+  background: #0b5ed7;
+  color: #fff;
+}
+
 
 .card-dash {
   border: none;

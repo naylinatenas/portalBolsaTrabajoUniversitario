@@ -37,6 +37,33 @@ class OfertaDAO
         return $this->pdo->query($sql)->fetchAll();
     }
 
+    public function listarActivasFiltradas($tipo, $modalidad, $empresa) {
+    $sql = "SELECT o.*, e.razon_social
+            FROM oferta o 
+            JOIN empresa e ON e.id_empresa=o.empresa_id
+            WHERE o.estado_oferta='activa'";
+
+    $params = [];
+
+    if ($tipo) {
+        $sql .= " AND o.tipo = :tipo";
+        $params[':tipo'] = $tipo;
+    }
+    if ($modalidad) {
+        $sql .= " AND o.modalidad = :modalidad";
+        $params[':modalidad'] = $modalidad;
+    }
+    if ($empresa) {
+        $sql .= " AND e.razon_social LIKE :empresa";
+        $params[':empresa'] = "%$empresa%";
+    }
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll();
+}
+
+
     public function listarPorEmpresa($empresa_id)
     {
         $stmt = $this->pdo->prepare("SELECT * FROM oferta WHERE empresa_id=:e ORDER BY fecha_publicacion DESC");

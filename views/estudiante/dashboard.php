@@ -31,7 +31,7 @@ $ofertas_recientes = array_slice($ofertas_activas, 0, 5);
   </div>
 
   <!-- TARJETAS -->
-<div class="row g-4 mb-4 justify-content-center">
+  <div class="row g-4 mb-4 justify-content-center">
     <div class="col-md-6 col-lg-4">
       <div class="card card-dash text-center p-4 shadow-sm hover-elevate">
         <i class="bi bi-briefcase-fill text-primary fs-1 mb-2"></i>
@@ -64,19 +64,31 @@ $ofertas_recientes = array_slice($ofertas_activas, 0, 5);
   <?php if (count($ofertas_recientes) > 0): ?>
     <div class="list-group shadow-sm rounded-3 overflow-hidden">
       <?php foreach ($ofertas_recientes as $o): ?>
+        <?php $ya_postulo = $postDAO->existe($o['id_oferta'], $estudiante->id_estudiante); ?>
+
         <a href="detalle_oferta.php?id=<?= $o['id_oferta'] ?>"
-           class="list-group-item list-group-item-action py-3 hover-elevate-sm">
+          class="list-group-item list-group-item-action py-3 border-0 border-bottom hover-elevate-sm">
+
           <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="mb-1 fw-bold"><?= htmlspecialchars($o['titulo']) ?></h6>
-              <small class="text-muted">
-                <?= htmlspecialchars($o['razon_social']) ?> • <?= htmlspecialchars($o['modalidad']) ?>
-              </small>
-            </div>
+            <h6 class="fw-bold text-primary mb-1"><?= htmlspecialchars($o['titulo']) ?></h6>
             <small class="text-muted"><?= date('d/m/Y', strtotime($o['fecha_publicacion'])) ?></small>
           </div>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <?= htmlspecialchars($o['razon_social']) ?> • <?= ucfirst($o['modalidad']) ?>
+            </small>
+
+            <?php if ($ya_postulo): ?>
+              <span class="badge bg-success px-2 py-1">Postulado</span>
+            <?php endif; ?>
+          </div>
+
         </a>
       <?php endforeach; ?>
+
+
+
     </div>
   <?php else: ?>
     <div class="alert alert-info">No hay ofertas disponibles por ahora.</div>
