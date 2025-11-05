@@ -3,6 +3,11 @@ require_once __DIR__ . '/../../config/auth.php';
 verificarRol('estudiante');
 
 include '../layout/header.php';
+?>
+
+<link rel="stylesheet" href="../css/estudiante.css">
+
+<?php
 require_once __DIR__ . '/../../models/EstudianteDAO.php';
 require_once __DIR__ . '/../../models/PostulacionDAO.php';
 require_once __DIR__ . '/../../models/OfertaDAO.php';
@@ -13,86 +18,102 @@ $ofertaDAO = new OfertaDAO();
 
 $usuario_id = $_SESSION['id_usuario'] ?? null;
 $estudiante = $estDAO->obtenerPorUsuario($usuario_id);
-$total_postulaciones = $estudiante ? count($postDAO->listarPorEstudiante($estudiante->id_estudiante)) : 0;
+
+// Manejo optimizado por si no se encuentra el estudiante
+$total_postulaciones = 0;
+if ($estudiante) {
+  $total_postulaciones = count($postDAO->listarPorEstudiante($estudiante->id_estudiante));
+}
+
 $ofertas_activas = $ofertaDAO->listarActivas();
 $total_ofertas = count($ofertas_activas);
 $ofertas_recientes = array_slice($ofertas_activas, 0, 5);
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-    <h2 class="fw-bold text-primary m-0">
-      Bienvenido, <?= $_SESSION['nombre'] ?? 'Estudiante' ?> 👋
+    <h2 class="fw-bold m-0"> Bienvenido, <?= htmlspecialchars($_SESSION['nombre'] ?? 'Estudiante') ?> 👋
     </h2>
 
-    <a href="perfil.php" class="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm hover-elevate-sm">
+    <a href="perfil.php" class="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm">
       <i class="bi bi-person-badge-fill fs-5"></i> Ver Perfil
     </a>
   </div>
 
-  <!-- TARJETAS -->
-  <div class="row g-4 mb-4 justify-content-center">
+  <div class="row g-4 mb-5 justify-content-center">
     <div class="col-md-6 col-lg-4">
-      <div class="card card-dash text-center p-4 shadow-sm hover-elevate">
-        <i class="bi bi-briefcase-fill text-primary fs-1 mb-2"></i>
-        <h6 class="text-muted mb-1">Ofertas Activas</h6>
-        <h2 class="fw-bold text-primary"><?= $total_ofertas ?></h2>
+      <div class="card card-dash text-center p-4">
+        <i class="bi bi-briefcase-fill mb-2"></i>
+        <h6 class="mb-1">Ofertas Activas</h6>
+        <h2 class="fw-bold"><?= $total_ofertas ?></h2>
+
+        <span class="card-cta mt-2">
+          Ver ofertas <i class="bi bi-arrow-right-short"></i>
+        </span>
         <a href="ofertas.php" class="stretched-link"></a>
       </div>
     </div>
 
     <div class="col-md-6 col-lg-4">
-      <div class="card card-dash text-center p-4 shadow-sm hover-elevate">
-        <i class="bi bi-send-check-fill text-primary fs-1 mb-2"></i>
-        <h6 class="text-muted mb-1">Mis Postulaciones</h6>
-        <h2 class="fw-bold text-primary"><?= $total_postulaciones ?></h2>
+      <div class="card card-dash text-center p-4">
+        <i class="bi bi-send-check-fill mb-2"></i>
+        <h6 class="mb-1">Mis Postulaciones</h6>
+        <h2 class="fw-bold"><?= $total_postulaciones ?></h2>
+
+        <span class="card-cta mt-2">
+          Ver postulaciones <i class="bi bi-arrow-right-short"></i>
+        </span>
         <a href="historial_postulaciones.php" class="stretched-link"></a>
       </div>
     </div>
   </div>
 
-  <!-- OFERTAS RECIENTES -->
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="fw-bold text-dark d-flex align-items-center gap-2">
+    <h4 class="fw-bold d-flex align-items-center gap-2">
       <i class="bi bi-pin-angle-fill text-primary fs-4"></i> Ofertas recientes
     </h4>
-    <a href="ofertas.php" class="btn btn-outline-primary btn-sm hover-elevate-sm">
+    <a href="ofertas.php" class="btn btn-outline-primary btn-sm">
       Ver más →
     </a>
   </div>
 
-  <?php if (count($ofertas_recientes) > 0): ?>
-    <div class="list-group shadow-sm rounded-3 overflow-hidden">
-      <?php foreach ($ofertas_recientes as $o): ?>
-        <?php $ya_postulo = $postDAO->existe($o['id_oferta'], $estudiante->id_estudiante); ?>
+  <div class="card-list-container">
+    <?php if (count($ofertas_recientes) > 0): ?>
 
-        <a href="detalle_oferta.php?id=<?= $o['id_oferta'] ?>"
-          class="list-group-item list-group-item-action py-3 border-0 border-bottom hover-elevate-sm">
+      <div class="list-group list-group-flush">
 
-          <div class="d-flex justify-content-between align-items-center">
-            <h6 class="fw-bold text-primary mb-1"><?= htmlspecialchars($o['titulo']) ?></h6>
-            <small class="text-muted"><?= date('d/m/Y', strtotime($o['fecha_publicacion'])) ?></small>
-          </div>
+        <?php foreach ($ofertas_recientes as $o): ?>
+          <?php $ya_postulo = $estudiante ? $postDAO->existe($o['id_oferta'], $estudiante->id_estudiante) : false; ?>
 
-          <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">
-              <?= htmlspecialchars($o['razon_social']) ?> • <?= ucfirst($o['modalidad']) ?>
-            </small>
+          <a href="detalle_oferta.php?id=<?= $o['id_oferta'] ?>"
+            class="list-group-item list-group-item-action">
 
-            <?php if ($ya_postulo): ?>
-              <span class="badge bg-success px-2 py-1">Postulado</span>
-            <?php endif; ?>
-          </div>
+            <div class="d-flex justify-content-between align-items-start">
+              <h6 class="text-primary"><?= htmlspecialchars($o['titulo']) ?></h6>
+              <small class="text-muted text-nowrap ms-3"><?= date('d/m/Y', strtotime($o['fecha_publicacion'])) ?></small>
+            </div>
 
-        </a>
-      <?php endforeach; ?>
+            <div class="d-flex justify-content-between align-items-center">
+              <small>
+                <?= htmlspecialchars($o['razon_social']) ?> • <?= ucfirst($o['modalidad']) ?>
+              </small>
 
+              <?php if ($ya_postulo): ?>
+                <span class="badge bg-success">Postulado</span>
+              <?php endif; ?>
+            </div>
 
+          </a>
+        <?php endforeach; ?>
 
-    </div>
-  <?php else: ?>
-    <div class="alert alert-info">No hay ofertas disponibles por ahora.</div>
-  <?php endif; ?>
+      </div>
+    <?php else: ?>
+      <div class="alert alert-info m-4 text-center">
+        <i class="bi bi-info-circle me-2"></i>
+        No hay ofertas disponibles por ahora.
+      </div>
+    <?php endif; ?>
+  </div>
 </div>
 
 <?php include '../layout/footer.php'; ?>

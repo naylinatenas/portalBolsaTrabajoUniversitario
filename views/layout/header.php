@@ -19,7 +19,7 @@ $bodyClass = ($theme === 'dark') ? 'bg-dark text-white' : '';
 <body class="<?= $bodyClass ?>">
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
   <div class="container">
-    <a class="navbar-brand text-primary" href="/index.php">Bolsa Universitaria</a>
+    <a class="navbar-brand text-primary" href="../../index.php">Bolsa Universitaria</a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav ms-auto">
         <?php if(isset($_SESSION['id_usuario'])): ?>
