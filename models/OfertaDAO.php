@@ -43,20 +43,21 @@ class OfertaDAO
     {
         try {
             $sql = "INSERT INTO oferta 
-                    (empresa_id, titulo, descripcion, tipo, salario_referencial, 
-                     modalidad, fecha_publicacion, fecha_cierre, estado_oferta)
-                    VALUES (:emp, :tit, :desc, :tipo, :sal, :mod, :pub, :cierre, :estado)";
+                (empresa_id, titulo, descripcion, tipo, salario_referencial, modalidad, fecha_publicacion, fecha_cierre, estado_oferta)
+                VALUES
+                (:empresa_id, :titulo, :descripcion, :tipo, :salario_referencial, :modalidad, :fecha_publicacion, :fecha_cierre, :estado_oferta)";
+            
             $stmt = $this->pdo->prepare($sql);
             $resultado = $stmt->execute([
-                ':emp' => $datos['empresa_id'],
-                ':tit' => $datos['titulo'],
-                ':desc' => $datos['descripcion'],
+                ':empresa_id' => $datos['empresa_id'],
+                ':titulo' => $datos['titulo'],
+                ':descripcion' => $datos['descripcion'] ?? null,
                 ':tipo' => $datos['tipo'],
-                ':sal' => $datos['salario_referencial'],
-                ':mod' => $datos['modalidad'],
-                ':pub' => $datos['fecha_publicacion'] ?? date('Y-m-d'),
-                ':cierre' => $datos['fecha_cierre'],
-                ':estado' => $datos['estado_oferta'] ?? 'activa'
+                ':salario_referencial' => $datos['salario_referencial'] ?? null,
+                ':modalidad' => $datos['modalidad'],
+                ':fecha_publicacion' => $datos['fecha_publicacion'] ?? date('Y-m-d'),
+                ':fecha_cierre' => $datos['fecha_cierre'] ?? null,
+                ':estado_oferta' => $datos['estado_oferta'] ?? 'activa'
             ]);
 
             if ($resultado) {
@@ -110,7 +111,7 @@ class OfertaDAO
     }
 
     /**
-     * Obtener oferta por ID (retorna objeto Oferta)
+     * Obtener oferta por ID (retorna array)
      */
     public function obtenerPorId($id)
     {
@@ -120,7 +121,7 @@ class OfertaDAO
                                     WHERE o.id_oferta = :id");
         $stmt->execute([':id' => $id]);
         $r = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $r ? $r : null; // Retorna array para compatibilidad con JSON
+        return $r ? $r : null;
     }
 
     /**
@@ -132,6 +133,7 @@ class OfertaDAO
         if (is_object($o)) {
             $datos = [
                 'id_oferta' => $o->id_oferta,
+                'empresa_id' => $o->empresa_id,
                 'titulo' => $o->titulo,
                 'descripcion' => $o->descripcion ?? null,
                 'tipo' => $o->tipo,
@@ -154,22 +156,27 @@ class OfertaDAO
     {
         try {
             $sql = "UPDATE oferta SET 
-                    empresa_id = :emp,
-                    titulo = :tit, 
+                    empresa_id = :empresa_id,
+                    titulo = :titulo,
+                    descripcion = :descripcion,
                     tipo = :tipo, 
-                    modalidad = :mod, 
-                    salario_referencial = :sal, 
-                    estado_oferta = :estado 
-                    WHERE id_oferta = :id";
+                    modalidad = :modalidad, 
+                    salario_referencial = :salario_referencial,
+                    fecha_cierre = :fecha_cierre,
+                    estado_oferta = :estado_oferta 
+                    WHERE id_oferta = :id_oferta";
+            
             $stmt = $this->pdo->prepare($sql);
             $resultado = $stmt->execute([
-                ':emp' => $datos['empresa_id'],
-                ':tit' => $datos['titulo'],
+                ':empresa_id' => $datos['empresa_id'],
+                ':titulo' => $datos['titulo'],
+                ':descripcion' => $datos['descripcion'] ?? null,
                 ':tipo' => $datos['tipo'],
-                ':mod' => $datos['modalidad'],
-                ':sal' => $datos['salario_referencial'],
-                ':estado' => $datos['estado_oferta'],
-                ':id' => $datos['id_oferta']
+                ':modalidad' => $datos['modalidad'],
+                ':salario_referencial' => $datos['salario_referencial'] ?? null,
+                ':fecha_cierre' => $datos['fecha_cierre'] ?? null,
+                ':estado_oferta' => $datos['estado_oferta'],
+                ':id_oferta' => $datos['id_oferta']
             ]);
 
             return $resultado;
@@ -193,7 +200,7 @@ class OfertaDAO
      */
     public function eliminar($id)
     {
-        return $this->cambiarEstado($id, 'inactiva');
+        return $this->cambiarEstado($id, 'cerrada');
     }
 
     /**
@@ -205,13 +212,15 @@ class OfertaDAO
         return $stmt->execute([':id' => $id]);
     }
 
-
+    /**
+     * Listar ofertas activas con filtros
+     */
     public function listarActivasFiltradas($tipo, $modalidad, $empresa)
     {
         $sql = "SELECT o.*, e.razon_social
-            FROM oferta o 
-            JOIN empresa e ON e.id_empresa=o.empresa_id
-            WHERE o.estado_oferta='activa'";
+                FROM oferta o 
+                JOIN empresa e ON e.id_empresa = o.empresa_id
+                WHERE o.estado_oferta = 'activa'";
 
         $params = [];
 
@@ -228,8 +237,36 @@ class OfertaDAO
             $params[':empresa'] = "%$empresa%";
         }
 
+        $sql .= " ORDER BY o.fecha_publicacion DESC";
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Contar ofertas activas
+     */
+    public function contarActivas()
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM oferta WHERE estado_oferta = 'activa'");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
+
+    /**
+     * Obtener ofertas próximas a vencer (dentro de 7 días)
+     */
+    public function obtenerProximasVencer()
+    {
+        $stmt = $this->pdo->prepare("SELECT o.*, e.razon_social 
+                                    FROM oferta o 
+                                    JOIN empresa e ON o.empresa_id = e.id_empresa 
+                                    WHERE o.estado_oferta = 'activa' 
+                                    AND o.fecha_cierre IS NOT NULL
+                                    AND o.fecha_cierre BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+                                    ORDER BY o.fecha_cierre ASC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

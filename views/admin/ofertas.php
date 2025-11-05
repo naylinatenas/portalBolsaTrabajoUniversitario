@@ -11,8 +11,8 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'admin') {
 }
 
 include '../layout/header.php';
-require_once __DIR__ . '/../../models/OfertaDAO.php';
-require_once __DIR__ . '/../../models/EmpresaDAO.php';
+require_once _DIR_ . '/../../models/OfertaDAO.php';
+require_once _DIR_ . '/../../models/EmpresaDAO.php';
 
 try {
     $dao = new OfertaDAO();
