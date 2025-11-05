@@ -75,8 +75,8 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { 
-      background: #f5f7fa; 
-      font-family: "Segoe UI", sans-serif; 
+      background: #f8f9fa; 
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
     
     .reportes-wrapper { 
@@ -87,23 +87,23 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
     
     /* Header */
     .page-header {
-      background: linear-gradient(135deg, #fb8c00 0%, #f57c00 100%);
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
       border-radius: 12px;
-      padding: 2rem;
+      padding: 2.5rem;
       margin-bottom: 2rem;
       color: white;
-      box-shadow: 0 4px 15px rgba(251,140,0,0.2);
+      box-shadow: 0 4px 20px rgba(30, 58, 138, 0.25);
     }
     
     .page-header h1 { 
-      font-size: 1.75rem; 
+      font-size: 2rem; 
       font-weight: 700; 
       margin: 0 0 0.5rem 0; 
     }
     
     .page-header p { 
-      font-size: 0.95rem; 
-      opacity: 0.9; 
+      font-size: 1rem; 
+      opacity: 0.95; 
       margin: 0; 
     }
 
@@ -115,141 +115,93 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
       text-decoration: none;
       font-size: 0.9rem;
       margin-bottom: 1rem;
-      padding: 0.5rem 1rem;
-      background: rgba(255,255,255,0.2);
+      padding: 0.6rem 1.2rem;
+      background: rgba(255,255,255,0.15);
       border-radius: 8px;
-      transition: background 0.3s;
+      transition: all 0.3s;
+      font-weight: 500;
     }
 
     .back-link:hover {
-      background: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.25);
       color: white;
+      transform: translateX(-3px);
     }
     
     /* Content Sections */
     .content-section {
       background: white;
       border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
     }
     
     .section-title {
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       font-weight: 700;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      color: #212529;
+      gap: 0.75rem;
+      color: #1e3a8a;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
     }
     
     .section-title i { 
-      color: #fb8c00; 
-      font-size: 1.3rem;
+      color: #1e40af; 
+      font-size: 1.4rem;
     }
     
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    
-    .stat-box {
-      background: white;
-      border-radius: 10px;
-      padding: 1.25rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      border-top: 3px solid var(--color);
-      text-align: center;
-    }
-    
-    .stat-box.primary { --color: #1e88e5; }
-    .stat-box.success { --color: #43a047; }
-    .stat-box.danger { --color: #e53935; }
-    .stat-box.warning { --color: #fb8c00; }
-    
-    .stat-box h3 {
-      font-size: 0.85rem;
-      color: #6c757d;
-      text-transform: uppercase;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-    
-    .stat-box .value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--color);
-      margin-bottom: 0.25rem;
-    }
-    
-    .stat-box .label {
-      font-size: 0.8rem;
-      color: #6c757d;
-    }
-    
-    /* Chart */
+    /* Chart Mejorado */
     .chart-container { 
-      height: 350px; 
-      margin-top: 1rem; 
+      height: 380px; 
+      margin-top: 1.5rem; 
       position: relative;
+      padding: 1.5rem;
+      background: #f9fafb;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
     }
 
     .charts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 2rem;
     }
     
-    /* Action Buttons */
-    .action-buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-top: 1.5rem;
+    @media (max-width: 992px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
     }
-    
-    .btn-export {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: #fb8c00;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s;
-      border: none;
-    }
-    
-    .btn-export:hover {
-      background: #f57c00;
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(251,140,0,0.3);
-    }
-    
+
     @media (max-width: 768px) {
       .reportes-wrapper { 
         padding: 1rem; 
       }
-      
-      .stats-grid { 
-        grid-template-columns: 1fr; 
-      }
 
-      .charts-grid {
-        grid-template-columns: 1fr;
+      .page-header {
+        padding: 1.5rem;
       }
       
       .page-header h1 { 
         font-size: 1.5rem; 
+      }
+
+      .content-section {
+        padding: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+      }
+
+      .chart-container {
+        height: 320px;
+        padding: 1rem;
       }
     }
   </style>
@@ -264,47 +216,7 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
         Volver al Dashboard
       </a>
       <h1><i class="bi bi-file-earmark-bar-graph"></i> Reportes y Estadísticas</h1>
-      <p>Análisis detallado del sistema de bolsa de trabajo</p>
-    </div>
-
-    <!-- Estadísticas de Postulaciones -->
-    <div class="content-section">
-      <h2 class="section-title">
-        <i class="bi bi-graph-up"></i>
-        Estado de Postulaciones
-      </h2>
-      
-      <div class="stats-grid">
-        <div class="stat-box primary">
-          <h3>Total</h3>
-          <div class="value"><?= $total_postulaciones ?></div>
-          <div class="label">Postulaciones</div>
-        </div>
-        
-        <div class="stat-box success">
-          <h3>Aceptadas</h3>
-          <div class="value"><?= $postulaciones_aceptadas ?></div>
-          <div class="label">
-            <?= $total_postulaciones > 0 ? round(($postulaciones_aceptadas/$total_postulaciones)*100, 1) : 0 ?>%
-          </div>
-        </div>
-        
-        <div class="stat-box danger">
-          <h3>Rechazadas</h3>
-          <div class="value"><?= $postulaciones_rechazadas ?></div>
-          <div class="label">
-            <?= $total_postulaciones > 0 ? round(($postulaciones_rechazadas/$total_postulaciones)*100, 1) : 0 ?>%
-          </div>
-        </div>
-        
-        <div class="stat-box warning">
-          <h3>Pendientes</h3>
-          <div class="value"><?= $postulaciones_pendientes ?></div>
-          <div class="label">
-            <?= $total_postulaciones > 0 ? round(($postulaciones_pendientes/$total_postulaciones)*100, 1) : 0 ?>%
-          </div>
-        </div>
-      </div>
+      <p>Análisis detallado del rendimiento y actividad del sistema</p>
     </div>
 
     <!-- Gráficos -->
@@ -326,7 +238,7 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
       <div class="content-section">
         <h2 class="section-title">
           <i class="bi bi-pie-chart"></i>
-          Estado de Ofertas Laborales
+          Distribución de Ofertas Laborales
         </h2>
         <div class="chart-container">
           <canvas id="ofertasChart"></canvas>
@@ -338,36 +250,10 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
     <div class="content-section">
       <h2 class="section-title">
         <i class="bi bi-calendar3"></i>
-        Postulaciones por Mes (Últimos 6 Meses)
+        Tendencia de Postulaciones (Últimos 6 Meses)
       </h2>
       <div class="chart-container">
         <canvas id="postulacionesMesChart"></canvas>
-      </div>
-    </div>
-
-    <!-- Acciones de Exportación -->
-    <div class="content-section">
-      <h2 class="section-title">
-        <i class="bi bi-download"></i>
-        Exportar Datos
-      </h2>
-      <div class="action-buttons">
-        <a href="exportar.php?tipo=empresas" class="btn-export">
-          <i class="bi bi-file-earmark-excel"></i>
-          Exportar Empresas
-        </a>
-        <a href="exportar.php?tipo=ofertas" class="btn-export">
-          <i class="bi bi-file-earmark-excel"></i>
-          Exportar Ofertas
-        </a>
-        <a href="exportar.php?tipo=postulaciones" class="btn-export">
-          <i class="bi bi-file-earmark-excel"></i>
-          Exportar Postulaciones
-        </a>
-        <a href="exportar.php?tipo=completo" class="btn-export">
-          <i class="bi bi-file-earmark-zip"></i>
-          Exportar Todo
-        </a>
       </div>
     </div>
   </div>
@@ -376,7 +262,11 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // Gráfico Top Empresas
+    // Configuración global de Chart.js
+    Chart.defaults.font.family = "'Segoe UI', sans-serif";
+    Chart.defaults.color = '#6b7280';
+
+    // Gráfico Top Empresas - Barras Horizontales Mejoradas
     <?php if (!empty($top_empresas)): ?>
     new Chart(document.getElementById('empresasChart'), {
       type: 'bar',
@@ -385,40 +275,69 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
         datasets: [{
           label: 'Ofertas Publicadas',
           data: <?= json_encode(array_column($top_empresas, 'count')) ?>,
-          backgroundColor: ['#1e88e5', '#42a5f5', '#64b5f6', '#90caf9', '#bbdefb'],
+          backgroundColor: function(context) {
+            const chart = context.chart;
+            const {ctx, chartArea} = chart;
+            if (!chartArea) return '#1e40af';
+            
+            const gradient = ctx.createLinearGradient(chartArea.left, 0, chartArea.right, 0);
+            gradient.addColorStop(0, '#1e40af');
+            gradient.addColorStop(1, '#3b82f6');
+            return gradient;
+          },
           borderRadius: 8,
-          borderWidth: 0
+          borderWidth: 0,
+          barThickness: 45,
+          maxBarThickness: 50
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         plugins: { 
-          legend: { display: false },
+          legend: { 
+            display: false 
+          },
           tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            padding: 12,
+            backgroundColor: 'rgba(30, 58, 138, 0.95)',
+            padding: 14,
             cornerRadius: 8,
             titleFont: { size: 14, weight: 'bold' },
-            bodyFont: { size: 13 }
+            bodyFont: { size: 13 },
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return 'Total: ' + context.parsed.x + ' ofertas';
+              }
+            }
           }
         },
         scales: { 
-          y: { 
+          x: { 
             beginAtZero: true, 
             ticks: { 
               stepSize: 1,
-              font: { size: 12 }
+              font: { size: 12 },
+              color: '#6b7280'
             },
             grid: {
-              color: 'rgba(0,0,0,0.05)'
+              color: 'rgba(0, 0, 0, 0.06)',
+              drawBorder: false
+            },
+            border: {
+              display: false
             }
           },
-          x: {
+          y: {
             ticks: {
-              font: { size: 12 }
+              font: { size: 12, weight: '500' },
+              color: '#374151'
             },
             grid: {
+              display: false
+            },
+            border: {
               display: false
             }
           }
@@ -427,15 +346,22 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
     });
     <?php endif; ?>
 
-    // Gráfico Estado de Ofertas
+    // Gráfico Estado de Ofertas - Dona Mejorada
     new Chart(document.getElementById('ofertasChart'), {
       type: 'doughnut',
       data: {
         labels: ['Activas', 'Inactivas', 'Cerradas'],
         datasets: [{
           data: [<?= $ofertas_activas ?>, <?= $ofertas_inactivas ?>, <?= $ofertas_cerradas ?>],
-          backgroundColor: ['#43a047', '#fb8c00', '#e53935'],
-          borderWidth: 0
+          backgroundColor: [
+            '#059669',
+            '#d97706',
+            '#dc2626'
+          ],
+          borderWidth: 4,
+          borderColor: '#fff',
+          hoverOffset: 12,
+          hoverBorderWidth: 4
         }]
       },
       options: {
@@ -445,20 +371,35 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
           legend: {
             position: 'bottom',
             labels: {
-              padding: 15,
-              font: { size: 12 }
+              padding: 20,
+              font: { size: 13, weight: '600' },
+              color: '#374151',
+              usePointStyle: true,
+              pointStyle: 'circle',
+              boxWidth: 10,
+              boxHeight: 10
             }
           },
           tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            padding: 12,
-            cornerRadius: 8
+            backgroundColor: 'rgba(30, 58, 138, 0.95)',
+            padding: 14,
+            cornerRadius: 8,
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 13 },
+            callbacks: {
+              label: function(context) {
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+              }
+            }
           }
-        }
+        },
+        cutout: '68%'
       }
     });
 
-    // Gráfico Postulaciones por Mes
+    // Gráfico Postulaciones por Mes - Línea con Área Mejorada
     new Chart(document.getElementById('postulacionesMesChart'), {
       type: 'line',
       data: {
@@ -466,29 +407,53 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
         datasets: [{
           label: 'Postulaciones',
           data: <?= json_encode(array_column(array_values($meses_data), 'count')) ?>,
-          borderColor: '#1e88e5',
-          backgroundColor: 'rgba(30,136,229,0.1)',
+          borderColor: '#1e40af',
+          backgroundColor: function(context) {
+            const chart = context.chart;
+            const {ctx, chartArea} = chart;
+            if (!chartArea) return 'rgba(30, 64, 175, 0.1)';
+            
+            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            gradient.addColorStop(0, 'rgba(30, 64, 175, 0.25)');
+            gradient.addColorStop(1, 'rgba(30, 64, 175, 0.02)');
+            return gradient;
+          },
           borderWidth: 3,
           fill: true,
           tension: 0.4,
           pointRadius: 5,
-          pointHoverRadius: 7,
-          pointBackgroundColor: '#1e88e5',
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#1e40af',
           pointBorderColor: '#fff',
-          pointBorderWidth: 2
+          pointBorderWidth: 3,
+          pointHoverBackgroundColor: '#1e3a8a',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 3
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
         plugins: {
           legend: {
             display: false
           },
           tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            padding: 12,
-            cornerRadius: 8
+            backgroundColor: 'rgba(30, 58, 138, 0.95)',
+            padding: 14,
+            cornerRadius: 8,
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 13 },
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return 'Total: ' + context.parsed.y + ' postulaciones';
+              }
+            }
           }
         },
         scales: {
@@ -496,17 +461,26 @@ $ofertas_cerradas = count($ofertas) - $ofertas_activas - $ofertas_inactivas;
             beginAtZero: true,
             ticks: {
               stepSize: 1,
-              font: { size: 12 }
+              font: { size: 12 },
+              color: '#6b7280'
             },
             grid: {
-              color: 'rgba(0,0,0,0.05)'
+              color: 'rgba(0, 0, 0, 0.06)',
+              drawBorder: false
+            },
+            border: {
+              display: false
             }
           },
           x: {
             ticks: {
-              font: { size: 12 }
+              font: { size: 12, weight: '500' },
+              color: '#374151'
             },
             grid: {
+              display: false
+            },
+            border: {
               display: false
             }
           }
