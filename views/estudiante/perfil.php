@@ -55,7 +55,7 @@ $est = $dao->obtenerPorUsuario($usuario_id);
 
           <?php if (!empty($est->cv_url)): ?>
             <div class="d-flex align-items-center gap-2">
-              <a href="<?= $est->cv_url ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+              <a href="/bolsatrabajouniversitario<?= $est->cv_url ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-file-earmark-pdf"></i> Ver CV actual
               </a>
               <button type="button" class="btn btn-sm btn-outline-secondary"
@@ -97,7 +97,9 @@ $est = $dao->obtenerPorUsuario($usuario_id);
   document.addEventListener("DOMContentLoaded", () => {
     const toastEl = document.getElementById('toastPerfil');
     if (toastEl) {
-      new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+      new bootstrap.Toast(toastEl, {
+        delay: 3000
+      }).show();
     }
   });
 </script>
