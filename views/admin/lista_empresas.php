@@ -56,7 +56,8 @@ if (is_array($empresas)) {
   <style>
     body { 
       background: #f5f7fa; 
-      font-family: "Segoe UI", sans-serif; 
+      font-family: "Segoe UI", sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     
     .main-container { 
@@ -392,6 +393,162 @@ if (is_array($empresas)) {
       font-family: 'Courier New', monospace;
     }
     
+    /* Modal Info */
+    .info-row {
+      display: flex;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #f1f3f5;
+    }
+    
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    
+    .info-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e88e5;
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+    
+    .info-value {
+      font-size: 0.9rem;
+      color: #495057;
+      flex: 1;
+    }
+    
+    /* BOTÓN DE MODO OSCURO / CLARO */
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 25px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #e9ecef;
+      color: #212529;
+      font-size: 1.25rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      z-index: 1050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-3px);
+      background: #1e88e5;
+      color: white;
+      border-color: #1e88e5;
+      box-shadow: 0 6px 20px rgba(30,136,229,0.4);
+    }
+
+    .theme-toggle:active {
+      transform: translateY(0);
+    }
+    
+    /* TEMA OSCURO */
+    [data-theme="dark"] {
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+    }
+    
+    [data-theme="dark"] body {
+      background: #1a1a1a;
+    }
+    
+    [data-theme="dark"] .stat-card,
+    [data-theme="dark"] .table-section {
+      background: #ffffffff;
+      color: #e0e0e0;
+    }
+    
+    [data-theme="dark"] .table-header {
+      background: #333333;
+      border-color: #444444;
+    }
+    
+    [data-theme="dark"] .table-header h2 {
+      color: #e0e0e0;
+    }
+    
+    [data-theme="dark"] .data-table thead th {
+      background: #333333;
+      color: #b0b0b0;
+      border-color: #444444;
+    }
+    
+    [data-theme="dark"] .data-table tbody td {
+      border-color: #3a3a3a;
+    }
+    
+    [data-theme="dark"] .data-table tbody tr:hover {
+      background-color: #3a3a3a;
+    }
+    
+    [data-theme="dark"] .empresa-nombre {
+      color: #070707f0
+    }
+    
+    [data-theme="dark"] .empresa-detalle {
+      color: #b0b0b0;
+    }
+    
+    [data-theme="dark"] .search-box input {
+      background: #333333;
+      border-color: #444444;
+      color: #e0e0e0;
+    }
+    
+    [data-theme="dark"] .search-box input::placeholder {
+      color: #888888;
+    }
+    
+    [data-theme="dark"] .theme-toggle {
+      background: #2d2d2d;
+      border-color: #444444;
+      color: #e0e0e0;
+    }
+    
+    [data-theme="dark"] .modal-content {
+      background: #2d2d2d;
+      color: #e0e0e0;
+    }
+    
+    [data-theme="dark"] .modal-header {
+      background: #333333 !important;
+      border-color: #444444;
+    }
+    
+    [data-theme="dark"] .modal-footer {
+      background: #333333 !important;
+      border-color: #444444;
+    }
+    
+    [data-theme="dark"] .info-row {
+      border-color: #3a3a3a;
+    }
+    
+    [data-theme="dark"] .info-value {
+      color: #b0b0b0;
+    }
+    
+    [data-theme="dark"] .stat-value {
+      color: #e0e0e0;
+    }
+    
+    [data-theme="dark"] .stat-content h3 {
+      color: #888888;
+    }
+    
+    [data-theme="dark"] .btn-close {
+      filter: invert(1);
+    }
+
     @media (max-width: 768px) {
       .main-container { 
         padding: 1rem; 
@@ -435,6 +592,14 @@ if (is_array($empresas)) {
       .data-table tbody td {
         padding: 0.75rem;
       }
+      
+      .theme-toggle {
+        bottom: 15px;
+        right: 15px;
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -456,8 +621,6 @@ if (is_array($empresas)) {
         </a>
       </div>
     </div>
-
-
 
     <!-- Tabla de Empresas -->
     <div class="table-section">
@@ -574,8 +737,11 @@ if (is_array($empresas)) {
     </div>
   </div>
 
-  <?php include '../layout/footer.php'; ?>
-  
+  <!-- BOTÓN DE MODO OSCURO / CLARO -->
+  <button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
+    <i class="bi bi-moon-fill"></i>
+  </button>
+
   <!-- MODAL DETALLE EMPRESA -->
   <div class="modal fade" id="modalDetalle" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -629,36 +795,12 @@ if (is_array($empresas)) {
     </div>
   </div>
   
-  <style>
-    .info-row {
-      display: flex;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid #f1f3f5;
-    }
-    
-    .info-row:last-child {
-      border-bottom: none;
-    }
-    
-    .info-label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #1e88e5;
-      min-width: 100px;
-      flex-shrink: 0;
-    }
-    
-    .info-value {
-      font-size: 0.9rem;
-      color: #495057;
-      flex: 1;
-    }
-  </style>
+  <?php include '../layout/footer.php'; ?>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Búsqueda en tiempo real
     document.addEventListener('DOMContentLoaded', function() {
+      // === BÚSQUEDA EN TIEMPO REAL ===
       const searchInput = document.getElementById('searchInput');
       
       if (searchInput) {
@@ -697,7 +839,7 @@ if (is_array($empresas)) {
         });
       }
       
-      // Modal Detalle
+      // === MODAL DETALLE ===
       const modalDetalle = document.getElementById('modalDetalle');
       if (modalDetalle) {
         modalDetalle.addEventListener('show.bs.modal', function(event) {
@@ -713,7 +855,7 @@ if (is_array($empresas)) {
           document.getElementById('detailDireccion').textContent = btn.getAttribute('data-direccion');
           document.getElementById('detailSector').textContent = btn.getAttribute('data-sector');
           
-          // Estado simple
+          // Estado con badge
           const estadoElement = document.getElementById('detailEstado');
           let badgeClass = 'bg-warning';
           
@@ -726,7 +868,35 @@ if (is_array($empresas)) {
           estadoElement.innerHTML = `<span class="badge ${badgeClass}">${estado.charAt(0).toUpperCase() + estado.slice(1)}</span>`;
         });
       }
+      
+      // === CAMBIO DE TEMA OSCURO/CLARO ===
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      const icon = themeToggle.querySelector('i');
+      
+      // Obtener tema guardado o usar 'light'
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      html.setAttribute('data-theme', currentTheme);
+      updateIcon(currentTheme);
+      
+      themeToggle.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateIcon(newTheme);
+      });
+      
+      function updateIcon(theme) {
+        if (theme === 'dark') {
+          icon.classList.remove('bi-moon-fill');
+          icon.classList.add('bi-sun-fill');
+        } else {
+          icon.classList.remove('bi-sun-fill');
+          icon.classList.add('bi-moon-fill');
+        }
+      }
     });
-  </script>
-</body>
-</html>
+      </script>
+    </body>
+    </html>
