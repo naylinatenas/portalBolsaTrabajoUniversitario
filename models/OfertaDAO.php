@@ -205,6 +205,7 @@ class OfertaDAO
         return $stmt->execute([':id' => $id]);
     }
 
+
     public function listarActivasFiltradas($tipo, $modalidad, $empresa)
     {
         $sql = "SELECT o.*, e.razon_social
