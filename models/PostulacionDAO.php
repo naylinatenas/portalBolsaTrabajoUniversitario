@@ -112,4 +112,39 @@ class PostulacionDAO
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$id_postulacion]);
     }
+
+public function listarPostulacionesLaborales()
+{
+    $sql = "
+        SELECT 
+            p.id_postulacion,
+            p.fecha_postulacion,
+            p.estado_postulacion,
+            p.comentario_empresa,
+            
+            o.titulo AS titulo_oferta,
+            o.tipo AS tipo_oferta, -- Si tienes 'laboral' o 'prácticas'
+            
+            e.razon_social AS nombre_empresa, -- ✅ Campo corregido
+            
+            u.nombre_completo AS nombre_estudiante,
+            u.correo AS correo_estudiante
+
+        FROM postulacion p
+        INNER JOIN oferta o ON p.oferta_id = o.id_oferta
+        INNER JOIN empresa e ON o.empresa_id = e.id_empresa
+        INNER JOIN estudiante est ON p.estudiante_id = est.id_estudiante
+        INNER JOIN usuario u ON est.usuario_id = u.id_usuario
+
+        -- Si deseas solo ofertas laborales descomenta:
+        -- WHERE o.tipo = 'laboral'
+
+        ORDER BY p.fecha_postulacion DESC
+    ";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 }
